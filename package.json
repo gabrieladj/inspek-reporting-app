@@ -1,0 +1,26 @@
+{
+  "name": "inspek-reporting-app",
+  "version": "1.0.0",
+  "description": "Streamlining Commercial Building Inspections",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrieladj/inspek-reporting-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gabrieladj/inspek-reporting-app/issues"
+  },
+  "homepage": "https://github.com/gabrieladj/inspek-reporting-app#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.7.1",
+    "pm2": "^5.4.2"
+  }
+}
