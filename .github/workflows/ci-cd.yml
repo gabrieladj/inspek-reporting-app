@@ -13,9 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v2
-
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
@@ -27,15 +24,27 @@ jobs:
     #- name: Run tests
       #run: npm test
 
-    - name: Deploy via SSH
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.DROPLET_IP }}
-        username: root
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        script: |
-          cd /path/to/your/app
-          git pull origin main
-          npm install
-          pm2 restart all
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Install SSH Key
+      run: |
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+        chmod 600 private_key.pem
+        eval $(ssh-agent -s)
+        ssh-add private_key.pem
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Add known hosts (DigitalOcean Droplet)
+      run: |
+        ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+
+    - name: Deploy application via SSH
+      run: |
+        ssh -o StrictHostKeyChecking=no root@${{ secrets.DROPLET_IP }} << 'EOF'
+          cd /home/gabi/inspek-reporting-app    # Directory on your server where your app is located
+          git pull origin main                  # Pull the latest changes from GitHub
+          npm install                           # Install any new dependencies
+          pm2 restart inspek-reporting-app      # Restart the app using PM2
+        EOF
