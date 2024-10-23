@@ -38,7 +38,7 @@ jobs:
 
     - name: Add known hosts (DigitalOcean Droplet)
       run: |
-        ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+        ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> C:\Users\gabbi\.ssh
 
     - name: Deploy application via SSH
       run: |
