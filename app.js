@@ -3,8 +3,8 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
-// Serve static files (like CSS)
-app.use(express.static('public'));
+// Serve static files (from public directory..?)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve the index.html file for the root URL
 app.get('/', (req, res) => {
@@ -13,5 +13,5 @@ app.get('/', (req, res) => {
 
 //start server
 app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running at http://0.0.0.0:${port}`);
 });
