@@ -30,7 +30,6 @@ This repo is to showcase my senior project for computer science at PSU. For this
 
 2. Install dependencies:
 ```
-    Copy code
     npm install
 ```
 
