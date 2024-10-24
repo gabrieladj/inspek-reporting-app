@@ -36,7 +36,6 @@ This repo is to showcase my senior project for computer science at PSU. For this
 
 3. Start the application:
 ```
-    Copy code
     npm start
 ```
 
