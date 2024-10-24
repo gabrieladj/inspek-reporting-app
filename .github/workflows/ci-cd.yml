@@ -26,10 +26,10 @@ jobs:
 
     - name: Install SSH Key
       run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa_github
-        chmod 600 ~/.ssh/id_rsa_github
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent -s)
-        ssh-add ~/.ssh/id_rsa_github
+        ssh-add ~/.ssh/id_rsa
     
     - name: List loaded SSH keys  # For debugging
       run: ssh-add -l   
