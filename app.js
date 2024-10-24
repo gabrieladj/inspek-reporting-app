@@ -11,7 +11,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 // });
 
-app.get('/test', (req, res) => {
+app.get('/inspek-reporting-app/test', (req, res) => {
     res.send("This is a test route");
   });
 
