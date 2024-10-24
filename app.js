@@ -7,7 +7,7 @@ const port = 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve the index.html file for the root URL
-app.get('/', (req, res) => {
+app.get('/test', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
