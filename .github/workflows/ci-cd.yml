@@ -30,11 +30,18 @@ jobs:
         chmod 600 private_key.pem
         eval $(ssh-agent -s)
         ssh-add private_key.pem
-        ssh-add -l  # Check if the key is added
+#ssh-add -l  # Check if the key is added
+    
+    - name: List loaded SSH keys  # For debugging
+      run: ssh-add -l   
 
     - name: Add known hosts (DigitalOcean Droplet)
       run: |
         ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+
+    - name: Debug SSH connection  # Optional Debugging Step
+      run: |
+        ssh -v gabi@${{ secrets.DROPLET_IP }} echo "SSH connection successful"
 
     - name: Deploy application via SSH
       run: |
