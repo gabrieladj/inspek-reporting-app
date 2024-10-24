@@ -42,7 +42,7 @@ jobs:
 
     - name: Deploy application via SSH
       run: |
-        ssh -o StrictHostKeyChecking=no root@${{ secrets.DROPLET_IP }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no gabi@${{ secrets.DROPLET_IP }} << 'EOF'
           cd /home/gabi/inspek-reporting-app    # Directory on your server where your app is located
           git pull origin main                  # Pull the latest changes from GitHub
           npm install                           # Install any new dependencies
