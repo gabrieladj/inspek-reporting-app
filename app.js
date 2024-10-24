@@ -7,9 +7,13 @@ const port = 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve the index.html file for the root URL
+// app.get('/test', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// });
+
 app.get('/test', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+    res.send("This is a test route");
+  });
 
 //start server
 app.listen(port, '0.0.0.0', () => {
