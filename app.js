@@ -3,6 +3,11 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
+// Basic route for testing
+app.get('/test', (req, res) => {
+    res.send('Test route working');
+  });
+
 // Serve static files (from public directory)
 app.use(express.static(path.join(__dirname, 'public')));
 
