@@ -1,3 +1,6 @@
+# to learn more about workflows, visit the link below:
+# https://docs.github.com/en/actions/about-github-actions/understanding-github-actions
+
 name: CI/CD Pipeline
 
 on:
@@ -28,11 +31,15 @@ jobs:
       run: |
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        eval $(ssh-agent -s)
-        ssh-add ~/.ssh/id_rsa
+      shell: /usr/bin/bash -e {0}
+    
+    - name: Set up SSH agent
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     
     - name: List loaded SSH keys  # For debugging
-      run: ssh-add -l   
+      run: ssh-add -l
 
     - name: Add known hosts (DigitalOcean Droplet)
       run: |
