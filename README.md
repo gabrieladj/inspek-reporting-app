@@ -16,7 +16,7 @@ This repo is to showcase my senior project for computer science at PSU. For this
 
 - **Node.js:** For backend server functionality.
 - **React:** For building the front-end user interface.
-- **PostgreSQL/MySQL:** For database management (or specify the database you're using).
+- **MongoDB:** For database management.
 - **PM2:** Process manager for Node.js applications.
 - **GitHub Actions:** For continuous integration and deployment.
 
