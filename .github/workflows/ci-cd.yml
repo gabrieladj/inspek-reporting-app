@@ -26,10 +26,10 @@ jobs:
 
     - name: Install SSH Key
       run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
-        chmod 600 private_key.pem
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent -s)
-        ssh-add private_key.pem
+        ssh-add ~/.ssh/id_rsa
     
     - name: List loaded SSH keys  # For debugging
       run: ssh-add -l   
