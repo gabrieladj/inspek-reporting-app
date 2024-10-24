@@ -18,12 +18,6 @@ jobs:
       with:
         node-version: '16'
 
-    #- name: Install dependencies
-      #run: npm install
-
-    #- name: Run tests
-      #run: npm test
-
     - name: Check out repository
       uses: actions/checkout@v2
 
@@ -33,10 +27,11 @@ jobs:
         chmod 600 private_key.pem
         eval $(ssh-agent -s)
         ssh-add private_key.pem
-    
+        ssh-add -l  # Check if the key is added
+
     - name: Add known hosts (DigitalOcean Droplet)
       run: |
-        ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> C:\Users\gabbi\.ssh\known_hosts
+        ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
 
     - name: Deploy application via SSH
       run: |
