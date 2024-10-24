@@ -30,7 +30,6 @@ jobs:
         chmod 600 private_key.pem
         eval $(ssh-agent -s)
         ssh-add private_key.pem
-#ssh-add -l  # Check if the key is added
     
     - name: List loaded SSH keys  # For debugging
       run: ssh-add -l   
