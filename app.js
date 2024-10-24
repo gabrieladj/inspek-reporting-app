@@ -3,7 +3,7 @@ const app = express();
 const port = 3000; // Or any port you prefer
 
 // Serve static files (like CSS)
-app.use(express.static('C:\Users\gabbi\inspek-reporting-app\public'));
+app.use("/public", express.static('C:\\Users\\gabbi\\inspek-reporting-app\\public'));
 
 app.get('/', (req, res) => {
     res.send('Inspek Reporting Backend is up and running!');
