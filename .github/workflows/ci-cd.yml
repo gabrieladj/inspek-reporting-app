@@ -38,10 +38,6 @@ jobs:
       run: |
         ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> C:\Users\gabbi\.ssh\known_hosts
 
-    - name: Set permissions on known_hosts
-      run: |
-        chmod 644 ~/.ssh/known_hosts
-
     - name: Deploy application via SSH
       run: |
         ssh -v -o StrictHostKeyChecking=no gabi@${{ secrets.DROPLET_IP }} << 'EOF'
