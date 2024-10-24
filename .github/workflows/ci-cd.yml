@@ -32,8 +32,7 @@ jobs:
         ssh-add ~/.ssh/id_rsa_github
     
     - name: List loaded SSH keys  # For debugging
-      run: eval $(ssh-agent -s)
-        ssh-add -l   
+      run: ssh-add -l   
 
     - name: Add known hosts (DigitalOcean Droplet)
       run: |
