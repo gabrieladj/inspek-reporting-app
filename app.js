@@ -1,12 +1,14 @@
 const express = require('express');
+const path = require('path'); // To use proper path management
 const app = express();
-const port = 3000; // Or any port you prefer
+const port = 3000;
 
 // Serve static files (like CSS)
-app.use("/public", express.static('C:\\Users\\gabbi\\inspek-reporting-app\\public'));
+app.use(express.static('public'));
 
+// Serve the index.html file for the root URL
 app.get('/', (req, res) => {
-    res.send('Inspek Reporting Backend is up and running!');
+    res.sendFile(path.join(__dirname, '/public/index.html'));
 });
 
 app.listen(port, '0.0.0.0', () => {
