@@ -11,6 +11,7 @@ function App() {
   const [email, setEmail] = useState('')
 
   return (
+    <Router basename="/">
     <div className="App">
       <header>
             <Router>
@@ -24,6 +25,7 @@ function App() {
             </Router>
       </header>
     </div>
+    </Router>
   );
 }
 
