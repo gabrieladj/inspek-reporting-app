@@ -16,7 +16,7 @@ app.get('/test', (req, res) => {
   });
 
 // Serve static files (from public directory)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'src')));
 
 // Serve the index.html file for the root URL
 app.get('/', (req, res) => {
