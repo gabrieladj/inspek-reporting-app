@@ -10,7 +10,7 @@ app.use(express.static(path.join(__dirname, 'inspek-frontend', 'build')));
 
 // Route to serve index.html for '/login'
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'inspek-frontend', 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
 });
 
 // // Import React pages (when the build is ready)
