@@ -6,7 +6,7 @@ const app = express();
 const port = 3000;
 
 // Serve static files from the `inspek-frontend/public` directory
-app.use(express.static(path.join(__dirname, 'inspek-frontend', 'public')));
+app.use(express.static(path.join(__dirname, 'inspek-frontend', 'build')));
 
 // Route to serve index.html for '/login'
 app.get('/login', (req, res) => {

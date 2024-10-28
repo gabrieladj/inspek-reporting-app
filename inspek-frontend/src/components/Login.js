@@ -6,7 +6,8 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-box">
-      <img src="/logo_transparent.png" alt="Inspek Logo" className="logo" />
+      <img src="/inspek_logo_real.png" alt="Inspek Logo" className="logo" />
+        <div className="logo_font">Inspek Reporting App</div>
         <form>
           <input type="text" placeholder="Username" className="login-input" />
           <input type="password" placeholder="Password" className="login-input" />

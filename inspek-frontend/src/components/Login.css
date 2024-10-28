@@ -19,11 +19,12 @@
   }
   
   /* Logo placeholder */
-  .logo {
+  .logo_font {
     font-size: 1.5em;
     margin-bottom: 20px;
+    margin-top: -10px;
     font-weight: bold;
-    color: #333;
+    color: #db8a58;
   }
   
   /* Style for inputs */
@@ -40,7 +41,7 @@
   .login-button {
     width: 100%;
     padding: 10px;
-    background-color: #941b29;
+    background-color: #4D5673;
     color: white;
     border: none;
     border-radius: 4px;
@@ -51,12 +52,12 @@
   }
   
   .login-button:hover {
-    background-color: #6b1a1a;
+    background-color: #3C3E48;
   }
   
   /* Logo image styling */
 .logo {
-    width: 300px; /* Adjust the width as needed */
-    height: auto; /* Keep aspect ratio */
+    width: 200px; 
+    height: auto; 
     margin-bottom: 20px;
   }
