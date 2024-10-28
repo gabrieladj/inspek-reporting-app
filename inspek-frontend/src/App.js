@@ -4,26 +4,27 @@ import Login from './components/Login.js';
 import './components/Login.css'
 import { useEffect, useState } from 'react'
 
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Router, Route, Routes } from 'react-router-dom'
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false)
   const [email, setEmail] = useState('')
 
   return (
-    <div className="App">
-      <header>
-            <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-                  <Route path="/Login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+    // <div className="App">
+    //   <header>
+    //         <Router>
+    //             <Routes>
+    //               <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+    //               <Route path="/Login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
                     
-                  {/* Add other routes here */}
+    //               {/* Add other routes here */}
                 
-                </Routes>
-            </BrowserRouter>
-      </header>
-    </div>
+    //             </Routes>
+    //         </Router>
+    //   </header>
+    // </div>
+    <div>Hello, World!</div>
   );
 }
 
