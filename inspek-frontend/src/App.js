@@ -11,20 +11,19 @@ function App() {
   const [email, setEmail] = useState('')
 
   return (
-    // <div className="App">
-    //   <header>
-    //         <Router>
-    //             <Routes>
-    //               <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-    //               <Route path="/Login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+    <div className="App">
+      <header>
+            <Router>
+                <Routes>
+                  <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+                  <Route path="/Login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
                     
-    //               {/* Add other routes here */}
+                  {/* Add other routes here */}
                 
-    //             </Routes>
-    //         </Router>
-    //   </header>
-    // </div>
-    <div>Hello, World!</div>
+                </Routes>
+            </Router>
+      </header>
+    </div>
   );
 }
 
