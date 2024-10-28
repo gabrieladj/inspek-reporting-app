@@ -5,22 +5,30 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
-// Import React pages (when the build is ready)
+// Serve static files from the `inspek-frontend/public` directory
+app.use(express.static(path.join(__dirname, 'inspek-frontend', 'public')));
+
+// Route to serve index.html for '/login'
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'inspek-frontend', 'index.html'));
+    res.sendFile(path.join(__dirname, 'inspek-frontend', 'public', 'index.html'));
 });
+
+// // Import React pages (when the build is ready)
+// app.get('/login', (req, res) => {
+//     app.use(express.static(path.join(__dirname, 'inspek-frontend', 'public')));
+// });
 
 // Basic route for testing
 app.get('/test', (req, res) => {
     res.send('Test route working');
   });
 
-// Serve static files (from public directory)
-app.use(express.static(path.join(__dirname, 'public')));
+// // Serve static files (from public directory)
+// app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve the index.html file for the root URL
+// Serve index.html for the root URL
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'inspek-frontend/public'));
+    res.sendFile(path.join(__dirname, 'inspek-frontend', 'public', 'index.html'));
 });
 
 //start server
