@@ -15,8 +15,8 @@ app.get('/test', (req, res) => {
     res.send('Test route working');
   });
 
-// Serve static files (from INSPEK directory)
-app.use(express.static(path.join(__dirname, 'inspek-frontend/public')));
+// Serve static files (from public directory)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve the index.html file for the root URL
 app.get('/', (req, res) => {
