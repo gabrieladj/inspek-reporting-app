@@ -25,14 +25,11 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install dependencies and build React app
+      working-directory: ./inspek-frontend   
       run: |
-          cd inspek-frontend        # Navigate to the frontend directory  
-          npm install               # Install dependencies
-          npm run build             # Build the React app
-          if [ ! -d "./build" ]; then
-            echo "Build directory not found!"
-            exit 1
-          fi
+        npm install
+        npm run build
+        ls -la            # List files in the current directory (looking for build dir.)
 
     - name: Create .ssh directory
       run: mkdir -p ~/.ssh
@@ -64,7 +61,7 @@ jobs:
 
     - name: Copy new frontend build to server
       run: |
-        scp -r ./build gabi@${{ secrets.DROPLET_IP }}:/home/gabi/inspek-reporting-app/inspek-frontend/
+        scp -r ./inspek-frontend/build gabi@${{ secrets.DROPLET_IP }}:/home/gabi/inspek-reporting-app/inspek-frontend/
   
     - name: Restart application using PM2
       run: |
