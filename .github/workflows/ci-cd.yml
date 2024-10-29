@@ -50,12 +50,13 @@ jobs:
 
     - name: Update backend and prepare server environment
       run: |
-        ssh -o StrictHostKeyChecking=no gabi@${{ secrets.DROPLET_IP }} << 'EOF'
-            cd /home/gabi/inspek-reporting-app    # Navigate to the app directory
-            git pull origin main                  # Pull the latest code (for backend updates)
-            npm install                           # Install any new backend dependencies
-            rm -rf inspek-frontend/build          # Remove old frontend build if it exists
-          EOF
+        ssh -o StrictHostKeyChecking=no gabi@${{ secrets.DROPLET_IP }} << EOF
+          cd /home/gabi/inspek-reporting-app    # Navigate to the app directory
+          git stash                             # Stash any local changes to avoid conflicts
+          git pull origin main                  # Pull the latest code (for backend updates)
+          npm install                           # Install any new backend dependencies
+          rm -rf inspek-frontend/build          # Remove old frontend build if it exists
+        EOF
 
     - name: Copy new frontend build to server
       run: |
