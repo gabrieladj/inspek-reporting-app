@@ -16,7 +16,7 @@ function App() {
       <header>
             <Router>
                 <Routes>
-                  <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+                  <Route path="/*" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
                   <Route path="/Login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
                     
                   {/* Add other routes here */}
