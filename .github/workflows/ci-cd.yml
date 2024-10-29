@@ -26,8 +26,9 @@ jobs:
 
     - name: Install dependencies and build React app
       run: |
-        npm install
-        npm run build  # Build the React app
+          cd inspek-frontend        # Navigate to the frontend directory  
+          npm install               # Install dependencies
+          npm run build             # Build the React app
 
     - name: Create .ssh directory
       run: mkdir -p ~/.ssh
@@ -47,21 +48,22 @@ jobs:
       run: |
         ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
 
-    - name: Deploy application via SSH and sync build files
+    - name: Update backend and prepare server environment
       run: |
         ssh -o StrictHostKeyChecking=no gabi@${{ secrets.DROPLET_IP }} << 'EOF'
-          cd /home/gabi/inspek-reporting-app        # Navigate to the app directory
-          git pull origin main                      # Pull the latest code
-          npm install                               # Install any new backend dependencies
-          rm -rf inspek-frontend/build              # Remove old build folder if exists
+            cd /home/gabi/inspek-reporting-app    # Navigate to the app directory
+            git pull origin main                  # Pull the latest code (for backend updates)
+            npm install                           # Install any new backend dependencies
+            rm -rf inspek-frontend/build          # Remove old frontend build if it exists
           EOF
-          
 
-    - name: Deploy application via SSH
+    - name: Copy new frontend build to server
+      run: |
+        scp -r ./build gabi@${{ secrets.DROPLET_IP }}:/home/gabi/inspek-reporting-app/inspek-frontend/
+  
+    - name: Restart application using PM2
       run: |
         ssh -o StrictHostKeyChecking=no gabi@${{ secrets.DROPLET_IP }} << 'EOF'
-          cd /home/gabi/inspek-reporting-app    # Directory on server where the app is located
-          git pull origin main                  # Pull latest changes from GitHub
-          npm install                           # Install any new dependencies
-          pm2 restart app.js                    # Restart the app using PM2
+        cd /home/gabi/inspek-reporting-app
+        pm2 restart app.js          # Restart the app to apply updates
         EOF
