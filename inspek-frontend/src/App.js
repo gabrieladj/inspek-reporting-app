@@ -4,7 +4,8 @@ import Login from './components/Login.js';
 import './components/Login.css'
 import { useEffect, useState } from 'react'
 
-import { Router, Route, Routes } from 'react-router-dom'
+import { BrowserRouter as BrowserRouter, Route, Routes } from 'react-router-dom';
+
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false)
@@ -13,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <header>
-            <Router>
+            <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
                   <Route path="/Login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
@@ -21,7 +22,7 @@ function App() {
                   {/* Add other routes here */}
                 
                 </Routes>
-            </Router>
+            </BrowserRouter>
       </header>
     </div>
   );
