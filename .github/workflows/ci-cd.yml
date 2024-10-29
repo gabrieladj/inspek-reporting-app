@@ -29,6 +29,10 @@ jobs:
           cd inspek-frontend        # Navigate to the frontend directory  
           npm install               # Install dependencies
           npm run build             # Build the React app
+          if [ ! -d "./build" ]; then
+            echo "Build directory not found!"
+            exit 1
+          fi
 
     - name: Create .ssh directory
       run: mkdir -p ~/.ssh
