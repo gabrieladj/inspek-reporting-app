@@ -27,7 +27,7 @@ app.get('/test', (req, res) => {
 // app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve index.html for the root URL
-app.get('/', (req, res) => {
+app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
 });
 

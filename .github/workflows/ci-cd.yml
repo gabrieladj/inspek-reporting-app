@@ -24,6 +24,11 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v3
 
+    - name: Install dependencies and build React app
+      run: |
+        npm install
+        npm run build  # Build the React app
+
     - name: Create .ssh directory
       run: mkdir -p ~/.ssh
 
@@ -37,17 +42,20 @@ jobs:
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    
-    - name: List loaded SSH keys  # For debugging
-      run: ssh-add -l
 
     - name: Add known hosts (DigitalOcean Droplet)
       run: |
         ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
 
-    - name: Debug SSH connection  # Optional Debugging Step
+    - name: Deploy application via SSH and sync build files
       run: |
-        ssh gabi@${{ secrets.DROPLET_IP }} echo "SSH connection successful"
+        ssh -o StrictHostKeyChecking=no gabi@${{ secrets.DROPLET_IP }} << 'EOF'
+          cd /home/gabi/inspek-reporting-app        # Navigate to the app directory
+          git pull origin main                      # Pull the latest code
+          npm install                               # Install any new backend dependencies
+          rm -rf inspek-frontend/build              # Remove old build folder if exists
+          EOF
+          
 
     - name: Deploy application via SSH
       run: |
