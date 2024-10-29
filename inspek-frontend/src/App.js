@@ -4,7 +4,7 @@ import Login from './components/Login.js';
 import './components/Login.css'
 import { useEffect, useState } from 'react'
 
-import { BrowserRouter as BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <header>
-            <BrowserRouter>
+            <Router>
                 <Routes>
                   <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
                   <Route path="/Login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
@@ -22,7 +22,7 @@ function App() {
                   {/* Add other routes here */}
                 
                 </Routes>
-            </BrowserRouter>
+            </Router>
       </header>
     </div>
   );
