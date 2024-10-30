@@ -1,24 +1,67 @@
 import React from 'react';
 import './Login.css';
-//import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
-  return (
-    <div className="login-container">
-      <div className="login-box">
-      <img src="/inspek_logo_real.png" alt="Inspek Logo" className="logo" />
-        <div className="logo_font">Inspek Reporting App</div>
-        <form>
-          <input type="text" placeholder="Username" className="login-input" />
-          <input type="password" placeholder="Password" className="login-input" />
-          <button type="submit" className="login-button">Login</button>
-        </form>
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+  
+      try {
+        const response = await fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password }),
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('token', data.token); // Store the token in local storage
+          navigate('/dashboard'); // Redirect to dashboard
+        } else {
+          setError('Invalid username or password');
+        }
+      } catch (error) {
+        console.error('Error logging in:', error);
+        setError('Login failed. Please try again.');
+      }
+    };
+  
+    return (
+      <div className="login-container">
+        <div className="login-box">
+          <img src="/inspek_logo_real.png" alt="Inspek Logo" className="logo" />
+          <div className="logo_font">Inspek Reporting App</div>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Username"
+              className="login-input"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="login-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button type="submit" className="login-button">Login</button>
+          </form>
+          {error && <p>{error}</p>}
+        </div>
       </div>
-    </div>
-  );
-}
-
-export default Login;
+    );
+  }
+  
+  export default Login;
 
 //import './style.css'; // Import CSS file
 

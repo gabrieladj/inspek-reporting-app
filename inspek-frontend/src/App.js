@@ -1,7 +1,11 @@
+//React app's main component - handles client-side routing
+
 import React from 'react';
 import './App.css';
-import Login from './components/Login.js';
 import './components/Login.css';
+import Login from './components/Login.js';
+import Dashboard from './components/Dashboard.js';
+import PrivateRoute from './components/PrivateRoute';
 import { useState } from 'react';
 //import { useEffect } from 'react'
 
@@ -21,7 +25,9 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
                   <Route path="/Login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-                    
+
+                  <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} /> 
+                  
                   {/* Add other routes here */}
                 
                 </Routes>
