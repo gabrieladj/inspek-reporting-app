@@ -1,9 +1,17 @@
+/* CSS Reset for body and html */
+html, body {
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  height: 100%; 
+  overflow: hidden; /* Optional: Prevent scrollbars if unnecessary */
+}
+
 /* Center the login container */
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Full viewport height */
+    height: 100vh; 
     background-color: #e0e0e0;
   }
   
@@ -18,7 +26,6 @@
     text-align: center;
   }
   
-  /* Logo placeholder */
   .logo_font {
     font-size: 1.5em;
     margin-bottom: 20px;

@@ -1,45 +1,48 @@
-//Express server file, backend of app - handles server-side lgic
-
+// Express server file, backend of app - handles server-side logic
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-const app = express();
-const port = 3000;
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const User = require('./models/User'); // Ensure the path is correct
+const port = 3001;  // Backend running on this port
 require('dotenv').config();
+const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
+
+const app = express();
+app.use(express.json()); // This is crucial!
+
+app.use(cors({
+    origin: 'http://localhost:3000', // Frontend’s address
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+}));
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Could not connect to MongoDB', err));
 
-app.use(express.json()); // for parsing application/json
-
-// Route to create sample users
-app.post('/register', async (req, res) => {
-    try {
-      // Example of adding a predefined user
-      const user = new User({
-        username: 'admin',
-        password: 'yourSecurePassword' // hash this later!!
-      });
-      await user.save();
-      res.send('User created!');
-    } catch (error) {
-      res.status(500).send('Error creating user');
-    }
-  });
-
 // Login route
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-  
-    // Authenticate user here (check against database)
-    if (username === 'admin' && password === 'yourSecurePassword') { // Replace with real authentication logic
-      const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
-      res.json({ token });
-    } else {
-      res.status(401).json({ message: 'Invalid credentials' });
+    try {
+        console.log(`Trying to log in user: ${username}`);
+        const user = await User.findOne({ username });
+        console.log('Found user:', user);
+
+        if (user && bcrypt.compareSync(password, user.password)) {
+            const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
+            res.json({ token });
+        } else {
+            console.log('Invalid credentials');
+            res.status(401).json({ message: 'Invalid credentials' });
+        }
+    } catch (error) {
+        console.error('Error logging in:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-  });
+});
 
 // Serve static files from the `inspek-frontend/public` directory
 app.use(express.static(path.join(__dirname, 'inspek-frontend', 'build')));
@@ -49,25 +52,17 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
 });
 
-// // Import React pages (when the build is ready)
-// app.get('/login', (req, res) => {
-//     app.use(express.static(path.join(__dirname, 'inspek-frontend', 'public')));
-// });
-
 // Basic route for testing
 app.get('/test', (req, res) => {
     res.send('Test route working');
-  });
-
-// // Serve static files (from public directory)
-// app.use(express.static(path.join(__dirname, 'public')));
+});
 
 // Serve index.html for the root URL
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
 });
 
-//start server
+// Start server
 app.listen(port, () => {
     console.log(`Server running on ${port}`);
 });

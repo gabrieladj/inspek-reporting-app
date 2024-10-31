@@ -9,7 +9,7 @@ import PrivateRoute from './components/PrivateRoute';
 import { useState } from 'react';
 //import { useEffect } from 'react'
 
-import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   // const [loggedIn, setLoggedIn] = useState(false)
@@ -24,7 +24,7 @@ function App() {
             <Router>
                 <Routes>
                   <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-                  <Route path="/Login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+                  <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
 
                   <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} /> 
                   
