@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   .catch((err) => console.error('Could not connect to MongoDB', err));
 
 // Login route
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
     try {
         console.log(`Trying to log in user: ${username}`);
@@ -53,7 +53,7 @@ app.get('/login', (req, res) => {
 });
 
 // Basic route for testing
-app.get('/test', (req, res) => {
+app.get('/api/test', (req, res) => {
     res.send('Test route working');
 });
 
