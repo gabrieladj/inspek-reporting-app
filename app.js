@@ -10,6 +10,8 @@ const port = 3001;  // Backend running on this port
 require('dotenv').config();
 const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
 
+const uri = process.env.MONGODB_URI;
+
 const app = express();
 app.use(express.json()); // This is crucial!
 
@@ -19,7 +21,7 @@ app.use(cors({
     credentials: true,
 }));
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Could not connect to MongoDB', err));
 
@@ -52,10 +54,10 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
 });
 
-// Basic route for testing
-app.get('/api/test', (req, res) => {
-    res.send('Test route working');
-});
+// // Basic route for testing
+// app.get('/api/test', (req, res) => {
+//     res.send('Test route working');
+// });
 
 // Serve index.html for the root URL
 app.get('/*', (req, res) => {

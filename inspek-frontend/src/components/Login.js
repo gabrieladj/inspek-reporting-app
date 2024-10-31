@@ -11,6 +11,7 @@ function Login() {
   
     const handleSubmit = async (e) => {
       e.preventDefault();
+      console.log(`Attempting to call API: ${process.env.REACT_APP_API_URL}/login`); // should log the correct API URL
   
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
@@ -50,6 +51,7 @@ function Login() {
               className="login-input"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
             />
             <input
               type="password"
@@ -57,6 +59,7 @@ function Login() {
               className="login-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
             />
             <button type="submit" className="login-button">Login</button>
           </form>
