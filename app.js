@@ -9,7 +9,6 @@ const User = require('./models/User'); // Ensure the path is correct
 const port = 3001;  // Backend running on this port
 require('dotenv').config();
 const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
-
 const uri = process.env.MONGODB_URI;
 
 const app = express();
