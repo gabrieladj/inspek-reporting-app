@@ -11,6 +11,7 @@ require('dotenv').config();
 const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
 const uri = process.env.MONGODB_URI;
 
+
 const app = express();
 app.use(express.json()); // This is crucial!
 
