@@ -10,13 +10,22 @@ const port = 3001;  // Backend running on this port
 require('dotenv').config();
 const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
 const uri = process.env.MONGODB_URI;
+require('dotenv').config();
 
 
 const app = express();
 app.use(express.json()); // This is crucial!
 
+const allowedOrigins = process.env.CORS_ORIGIN.split(',');
+
 app.use(cors({
-    origin: 'http://localhost:3000', // Frontend’s address
+    origin: function (origin, callback) {
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }));
@@ -65,6 +74,6 @@ app.get('/*', (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on ${port}`);
 });
