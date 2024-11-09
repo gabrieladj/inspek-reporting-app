@@ -1,4 +1,5 @@
 // Express server file, backend of app - handles server-side logic
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -9,14 +10,15 @@ const User = require('./models/User'); // Ensure the path is correct
 const port = 3001;  // Backend running on this port
 const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
 const uri = process.env.MONGODB_URI;
-require('dotenv').config();
-console.log(process.env.CORS_ORIGIN);
 
 
 const app = express();
 app.use(express.json()); // This is crucial!
 
-const allowedOrigins = process.env.CORS_ORIGIN.split(',');
+//const allowedOrigins = process.env.CORS_ORIGIN.split(',');
+const allowedOrigins = process.env.CORS_ORIGIN || 'http://localhost:3000';
+console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
+console.log('Allowed Origins:', allowedOrigins);
 
 app.use(cors({
     origin: function (origin, callback) {
