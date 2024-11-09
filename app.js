@@ -7,10 +7,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('./models/User'); // Ensure the path is correct
 const port = 3001;  // Backend running on this port
-require('dotenv').config();
 const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
 const uri = process.env.MONGODB_URI;
 require('dotenv').config();
+console.log(process.env.CORS_ORIGIN);
 
 
 const app = express();
