@@ -10,7 +10,6 @@ const User = require('./models/User'); // Ensure the path is correct
 const port = 3001;  // Backend running on this port
 const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
 const uri = process.env.MONGODB_URI;
-//const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
 
 const app = express();
 app.use(express.json()); // This is crucial!
