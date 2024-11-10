@@ -11,7 +11,6 @@ function Login() {
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-      console.log(`Attempting to call API: ${process.env.REACT_APP_API_URL}/login`); // should log the correct API URL
   
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {

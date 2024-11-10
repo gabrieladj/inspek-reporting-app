@@ -10,18 +10,18 @@ const User = require('./models/User'); // Ensure the path is correct
 const port = 3001;  // Backend running on this port
 const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
 const uri = process.env.MONGODB_URI;
-
+//const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
 
 const app = express();
 app.use(express.json()); // This is crucial!
 
-//const allowedOrigins = process.env.CORS_ORIGIN.split(',');
-const allowedOrigins = process.env.CORS_ORIGIN || 'http://localhost:3000';
+const allowedOrigins = process.env.CORS_ORIGIN.split(',');
 console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
 console.log('Allowed Origins:', allowedOrigins);
 
 app.use(cors({
     origin: function (origin, callback) {
+        console.log(`Incoming request from origin: ${origin}`);
         if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
             callback(null, true);
         } else {
