@@ -1,5 +1,6 @@
 // Express server file, backend of app - handles server-side logic
-require('dotenv').config();
+require('dotenv').config({ path: '/home/gabi/inspek-reporting-app/.env' });
+
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -13,6 +14,7 @@ const uri = process.env.MONGODB_URI;
 
 const app = express();
 app.use(express.json()); // This is crucial!
+
 
 const allowedOrigins = process.env.CORS_ORIGIN.split(',');
 console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
