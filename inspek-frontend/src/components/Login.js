@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 
+console.log("API URL:", process.env.REACT_APP_API_URL);
 
 function Login() {
     const [username, setUsername] = useState('');
