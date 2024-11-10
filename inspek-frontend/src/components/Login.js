@@ -14,7 +14,7 @@ function Login() {
       e.preventDefault();
   
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+        const response = await fetch(`http://142.93.112.132/api/login`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
