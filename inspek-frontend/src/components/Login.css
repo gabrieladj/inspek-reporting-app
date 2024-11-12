@@ -1,20 +1,20 @@
 /* CSS Reset for body and html */
 html, body {
-  margin: 0; /* Remove default margin */
-  padding: 0; /* Remove default padding */
+  margin: 0; 
+  padding: 0; 
   height: 100%; 
-  overflow: hidden; /* Optional: Prevent scrollbars if unnecessary */
+  overflow: hidden; /*Prevent scrollbars if unnecessary */
 }
 
 /* Center the login container */
 .login-container {
     display: flex;
     justify-content: left;
-    padding-left: 260px;
     align-items: center;
+    padding-left: 260px;
     height: 100vh; 
-    background-size: cover; /* Cover entire area */
-    background-position: center; /* Center the background */
+    background-size: cover; 
+    background-position: center; 
   }
   
   /* Style for the login box */

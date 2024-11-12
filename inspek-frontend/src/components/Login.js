@@ -47,7 +47,9 @@ function Login() {
       style={{
         backgroundImage: `url(${process.env.PUBLIC_URL}/login_bg.jpg)`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        width: '100vw', // make sure it spans full viewport width
+        height: '100vh', // make sure it spans full viewport height
       }}
     >
         <div className="login-box">
