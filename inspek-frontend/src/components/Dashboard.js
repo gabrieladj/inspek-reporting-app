@@ -1,9 +1,7 @@
 import React from 'react';
 import './Dashboard.css';
-import { useNavigate, useLocation } from 'react-router-dom';
 
 const Dashboard = () => {
-  const navigate = useNavigate(); // Get the navigate function
 
   return (
     <div className="main-content">
