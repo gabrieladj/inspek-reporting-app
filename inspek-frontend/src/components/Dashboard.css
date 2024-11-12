@@ -28,7 +28,7 @@
   margin: 7px 0;
   padding: 10px; 
   width: 100%; 
-  background-color: #4B5675; 
+  background-color: #4b5675; 
   color: white; 
   border: none; 
   border-radius: 8px; 
@@ -47,7 +47,7 @@
 
 /* Active tab styling */
 .sidebar-button.active {
-  background-color: #2e3b4e; /* Darker color for active tab */
+  background-color: #31374b; /* Darker color for active tab */
   cursor: default; /* Disable cursor when active */
 }
 

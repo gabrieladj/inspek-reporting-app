@@ -4,7 +4,7 @@ import './Dashboard.css';
 const Dashboard = () => {
 
   return (
-    <div className="main-content">
+    <div>
       <h1>Welcome to the Dashboard</h1>
     </div>
   );
