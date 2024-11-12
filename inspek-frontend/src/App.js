@@ -4,17 +4,19 @@ import React from 'react';
 import './App.css';
 import './components/Login.css';
 import Login from './components/Login.js';
+
 import Dashboard from './components/Dashboard.js';
+import DatabaseAccess from './components/DatabaseAccess.js';
+import ReportGeneration from './components/ReportGeneration.js';
+import ViewDrafts from './components/ViewDrafts.js';
 import PrivateRoute from './components/PrivateRoute';
 import { useState } from 'react';
+import Layout from './components/Layout'
 //import { useEffect } from 'react'
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
-  // const [loggedIn, setLoggedIn] = useState(false)
-  // const [email, setEmail] = useState('')
-
   const [setLoggedIn] = useState(false)
   const [setEmail] = useState('')
 
@@ -26,9 +28,15 @@ function App() {
                   <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
                   <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
 
-                  <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} /> 
-                  
-                  {/* Add other routes here */}
+                    {/* Private route for Dashboard and DatabaseAccess using Layout */}
+                  <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/database-access" element={<DatabaseAccess />} />
+                  <Route path="/report-generation" element={<ReportGeneration />} />
+                  <Route path="/view-drafts" element={<ViewDrafts />} />
+                  </Route>
+                
+                {/* Add other routes here */}
                 
                 </Routes>
             </Router>

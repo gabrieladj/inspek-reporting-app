@@ -1,38 +1,58 @@
-.dashboard {
-    display: flex; /* Use flexbox for layout */
-    height: 100vh; 
-  }
-  
-  .sidebar {
-    width: 250px; 
-    background-color: #3C3E49; 
-    padding: 20px;
-    border-right: 1px solid #ccc; /* slight shadow */
-    color: white; 
-  }
-  
-  .sidebar h2 {
-    margin-bottom: 20px; /* Space below the title */
-  }
-  
-  .sidebar-button {
-    display: block; /* Stack buttons vertically */
-    margin: 10px 0; 
-    padding: 10px; 
-    width: 100%; 
-    background-color: #4B5675; 
-    color: white; 
-    border: none; 
-    border-radius: 8px; 
-    cursor: pointer; 
-  }
-  
-  .sidebar-button:hover {
-    background-color: #5e6d90; 
-  }
-  
-  .main-content {
-    flex: 1; 
-    padding: 20px; 
-  }
-  
+/* Remove the underline for links */
+.sidebar a {
+  text-decoration: none;
+}
+
+.layout {
+  display: flex; /* Align sidebar and content side by side */
+  height: 100vh; /* Make the layout fill the entire viewport height */
+}
+
+.sidebar {
+  width: 250px; /* Sidebar width */
+  background-color: #3C3E49; 
+  padding: 20px;
+  border-right: 1px solid #ccc; /* slight shadow */
+  color: white;
+  display: flex;
+  flex-direction: column; /* Stack the sidebar items vertically */
+  justify-content: flex-start; /* Align items to the top */
+}
+
+.sidebar h2 {
+  margin-bottom: 20px; /* Space below the title */
+}
+
+.sidebar-button {
+  display: block; /* Stack buttons vertically */
+  margin: 7px 0;
+  padding: 10px; 
+  width: 100%; 
+  background-color: #4B5675; 
+  color: white; 
+  border: none; 
+  border-radius: 8px; 
+  cursor: pointer; 
+}
+
+.sidebar-button:hover {
+  background-color: #5e6d90; 
+}
+
+.main-content {
+  flex: 1; 
+  padding: 20px; 
+  overflow-y: auto; /* Allow scrolling if content exceeds available height */
+}
+
+/* Active tab styling */
+.sidebar-button.active {
+  background-color: #2e3b4e; /* Darker color for active tab */
+  cursor: default; /* Disable cursor when active */
+}
+
+.sidebar-button:disabled {
+  background-color: #22232a; 
+  opacity: 0.6;
+  cursor: default;
+}

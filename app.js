@@ -7,10 +7,12 @@ const path = require('path');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const User = require('./models/User'); // Ensure the path is correct
 const port = 3001;  // Backend running on this port
 const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
 const uri = process.env.MONGODB_URI;
+
+const User = require('./models/User');
+const Report = require('./models/Report');
 
 const app = express();
 app.use(express.json()); // This is crucial!
@@ -66,11 +68,6 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
 });
 
-// // Basic route for testing
-// app.get('/api/test', (req, res) => {
-//     res.send('Test route working');
-// });
-
 // Serve index.html for the root URL
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
@@ -80,3 +77,81 @@ app.get('/*', (req, res) => {
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on ${port}`);
 });
+
+// GET all reports
+app.get('/api/reports', async (req, res) => {
+    try {
+      const reports = await Report.find();
+      res.json(reports);
+    } catch (err) {
+      console.error('Error fetching reports:', err);
+      res.status(500).json({ message: 'Error fetching reports' });
+    }
+  });
+  
+  // GET a single report by ID
+  app.get('/api/reports/:id', async (req, res) => {
+    try {
+      const report = await Report.findById(req.params.id);
+      if (!report) {
+        return res.status(404).json({ message: 'Report not found' });
+      }
+      res.json(report);
+    } catch (err) {
+      console.error('Error fetching report:', err);
+      res.status(500).json({ message: 'Error fetching report' });
+    }
+  });
+  
+  // POST a new report
+  app.post('/api/reports', async (req, res) => {
+    const { title, description, status } = req.body;
+    try {
+      const newReport = new Report({
+        title,
+        description,
+        status,
+      });
+      await newReport.save();
+      res.status(201).json(newReport);
+    } catch (err) {
+      console.error('Error creating report:', err);
+      res.status(500).json({ message: 'Error creating report' });
+    }
+  });
+  
+  // PUT (update) an existing report
+  app.put('/api/reports/:id', async (req, res) => {
+    const { title, description, status } = req.body;
+    try {
+      const report = await Report.findById(req.params.id);
+      if (!report) {
+        return res.status(404).json({ message: 'Report not found' });
+      }
+  
+      report.title = title || report.title;
+      report.description = description || report.description;
+      report.status = status || report.status;
+      report.updatedAt = Date.now();
+  
+      await report.save();
+      res.json(report);
+    } catch (err) {
+      console.error('Error updating report:', err);
+      res.status(500).json({ message: 'Error updating report' });
+    }
+  });
+  
+  // DELETE a report by ID
+  app.delete('/api/reports/:id', async (req, res) => {
+    try {
+      const report = await Report.findByIdAndDelete(req.params.id);
+      if (!report) {
+        return res.status(404).json({ message: 'Report not found' });
+      }
+      res.status(204).send();
+    } catch (err) {
+      console.error('Error deleting report:', err);
+      res.status(500).json({ message: 'Error deleting report' });
+    }
+  });
