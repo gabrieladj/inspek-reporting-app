@@ -9,19 +9,21 @@ html, body {
 /* Center the login container */
 .login-container {
     display: flex;
-    justify-content: center;
+    justify-content: left;
+    padding-left: 260px;
     align-items: center;
     height: 100vh; 
-    background-color: #e0e0e0;
+    background-size: cover; /* Cover entire area */
+    background-position: center; /* Center the background */
   }
   
   /* Style for the login box */
   .login-box {
-    width: 300px;
+    width: 280px;
     padding: 20px;
     background-color: rgb(168, 85, 85);
-    border: 1px solid black;
     border-radius: 8px;
+    background-color: rgba(168, 85, 85, 0.97); /* RGBA with 0.8 opacity */
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
   }

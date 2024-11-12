@@ -43,7 +43,13 @@ function Login() {
 };
   
     return (
-      <div className="login-container">
+      <div className="login-container"
+      style={{
+        backgroundImage: `url(${process.env.PUBLIC_URL}/login_bg.jpg)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
+    >
         <div className="login-box">
           <img src="/inspek_logo_real.png" alt="Inspek Logo" className="logo" />
           <div className="logo_font">Inspek Reporting App</div>
