@@ -17,17 +17,26 @@ const Report = require('./models/Report');
 const app = express();
 app.use(express.json()); 
 
-const allowedOrigins = ['http://localhost:3000', 'http://142.93.112.132'];
-app.use(cors({
+// Get the CORS origin(s) from the environment variable
+const allowedOrigins = process.env.CORS_ORIGIN.split(',');
+
+// Set up CORS with the allowed origins from the environment variable
+const corsOptions = {
   origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      // Allow the request if the origin is allowed
       callback(null, true);
     } else {
+      // Reject the request if the origin is not allowed
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true // Ensure this is true for cookies to be sent with requests
-}));
+  methods: 'GET,POST,PUT,DELETE',
+  credentials: true,
+};
+
+// Apply CORS middleware to your Express app
+app.use(cors(corsOptions));
 
 //console.log("MongoDB URI:", process.env.MONGODB_URI);
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
