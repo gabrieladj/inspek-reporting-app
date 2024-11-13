@@ -17,17 +17,25 @@ const Report = require('./models/Report');
 const app = express();
 app.use(express.json()); // This is crucial!
 
-// const allowedOrigins = process.env.CORS_ORIGIN.split(',');
+const allowedOrigins = process.env.CORS_ORIGIN.split(',');
 // console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
 // console.log('Allowed Origins:', allowedOrigins);
 
 app.use(cors({
-  origin: '*', // Allow all origins temporarily
+  origin: function (origin, callback) {
+      console.log(`Incoming request from origin: ${origin}`);
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+          callback(null, true);
+      } else {
+          callback(new Error('Not allowed by CORS'));
+      }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
 
-console.log("MongoDB URI:", process.env.MONGODB_URI);
+
+//console.log("MongoDB URI:", process.env.MONGODB_URI);
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Could not connect to MongoDB', err));
