@@ -19,20 +19,25 @@ app.use(express.json());
 
 const allowedOrigins = ['http://localhost:3000', 'http://142.93.112.132'];
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
-  }
+  },
+  credentials: true // Ensure this is true for cookies to be sent with requests
 }));
-
 
 //console.log("MongoDB URI:", process.env.MONGODB_URI);
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Could not connect to MongoDB', err));
+
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Credentials', 'true'); // Allow credentials
+    next();
+  });
 
 // Login route
 app.post('/api/login', async (req, res) => {
