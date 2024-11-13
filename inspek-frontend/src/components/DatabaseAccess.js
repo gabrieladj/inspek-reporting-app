@@ -6,7 +6,7 @@ const DatabaseAccess = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-      fetch("http://142.93.112.132:3001/reports")
+      fetch("http://localhost:3001/api/reports")
           .then(response => response.json())
           .then(data => {
               if (Array.isArray(data)) {
@@ -29,26 +29,40 @@ const DatabaseAccess = () => {
         }
     };
 
+    const tableStyles = {
+      borderCollapse: 'collapse',
+      width: '100%',
+      marginTop: '20px',
+    };
+  
+  const thTdStyles = {
+      border: '1px solid #ddd',
+      padding: '8px',
+      textAlign: 'center',
+      fontSize: '14px',
+    };
+
     return (
         <div>
-            <h1>Reports Dashboard</h1>
+            <h1>Database Access</h1>
             {error && <p>{error}</p>}
-            <table>
+            <center>
+            <table style={tableStyles}>
                 <thead>
                     <tr>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th style={thTdStyles}>Title</th>
+                        <th style={thTdStyles}>Description</th>
+                        <th style={thTdStyles}>Status</th>
+                        <th style={thTdStyles}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {reports.map((report) => (
                         <tr key={report._id}>
-                            <td>{report.title}</td>
-                            <td>{report.description}</td>
-                            <td>{report.status}</td>
-                            <td>
+                            <td style={thTdStyles}>{report.title}</td>
+                            <td style={thTdStyles}>{report.description}</td>
+                            <td style={thTdStyles}>{report.status}</td>
+                            <td style={thTdStyles}>
                                 <button>Edit</button>
                                 <button onClick={() => handleDelete(report._id)}>Delete</button>
                             </td>
@@ -56,6 +70,7 @@ const DatabaseAccess = () => {
                     ))}
                 </tbody>
             </table>
+            </center>
         </div>
     );
 };

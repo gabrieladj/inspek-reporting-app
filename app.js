@@ -1,5 +1,5 @@
 // Express server file, backend of app - handles server-side logic
-require('dotenv').config({ path: '/home/gabi/inspek-reporting-app/.env' });
+require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -17,25 +17,18 @@ const Report = require('./models/Report');
 const app = express();
 app.use(express.json()); // This is crucial!
 
-
-const allowedOrigins = process.env.CORS_ORIGIN.split(',');
-console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
-console.log('Allowed Origins:', allowedOrigins);
+// const allowedOrigins = process.env.CORS_ORIGIN.split(',');
+// console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
+// console.log('Allowed Origins:', allowedOrigins);
 
 app.use(cors({
-    origin: function (origin, callback) {
-        console.log(`Incoming request from origin: ${origin}`);
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
+  origin: '*', // Allow all origins temporarily
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
 }));
 
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+console.log("MongoDB URI:", process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Could not connect to MongoDB', err));
 
@@ -60,24 +53,17 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Serve static files from the `inspek-frontend/public` directory
-app.use(express.static(path.join(__dirname, 'inspek-frontend', 'build')));
-
 // Route to serve index.html for '/login'
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
 });
 
-// Serve index.html for the root URL
-app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
+//test api route
+app.get('/test', (req, res) => {
+  res.send('Server is working!');
 });
 
-// Start server
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on ${port}`);
-});
-
+//API ROUTES BELOW
 // GET all reports
 app.get('/api/reports', async (req, res) => {
     try {
@@ -154,4 +140,17 @@ app.get('/api/reports', async (req, res) => {
       console.error('Error deleting report:', err);
       res.status(500).json({ message: 'Error deleting report' });
     }
+  });
+
+  // Serve static files from the `inspek-frontend/public` directory
+  app.use(express.static(path.join(__dirname, 'inspek-frontend', 'build')));  
+
+  // Serve index.html for the root URL - wildcard routes
+  app.get('/*', (req, res) => {
+      res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
+  });
+
+  // Start server
+  app.listen(port, '0.0.0.0', () => {
+      console.log(`Server running on ${port}\n`);
   });
