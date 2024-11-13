@@ -22,16 +22,16 @@ const Layout = () => {
           <button className={getButtonClass('/dashboard')}>Home</button>
         </Link>
 
-        <Link to="/database-access">
-          <button className={getButtonClass('/database-access')}>Access Database</button>
-        </Link>
-
         <Link to="/report-generation">
           <button className={getButtonClass('/report-generation')}>Start New Report</button>
         </Link>
 
         <Link to="/view-drafts">
-          <button className={getButtonClass('/view-drafts')}>View Drafts</button>
+          <button className={getButtonClass('/view-drafts')}>View Report Drafts</button>
+        </Link>
+
+        <Link to="/database-access">
+          <button className={getButtonClass('/database-access')}>Access Database</button>
         </Link>
 
         <div className="logout-container">

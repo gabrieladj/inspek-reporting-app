@@ -28,12 +28,12 @@ function App() {
                   <Route path="/" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
                   <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
 
-                    {/* Private route for Dashboard and DatabaseAccess using Layout */}
+                    {/* Private route for other components using Layout */}
                   <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/database-access" element={<DatabaseAccess />} />
                   <Route path="/report-generation" element={<ReportGeneration />} />
                   <Route path="/view-drafts" element={<ViewDrafts />} />
+                  <Route path="/database-access" element={<DatabaseAccess />} />
                   </Route>
                 
                 {/* Add other routes here */}

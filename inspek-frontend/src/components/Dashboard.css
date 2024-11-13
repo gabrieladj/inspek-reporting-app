@@ -47,7 +47,7 @@
 
 /* Active tab styling */
 .sidebar-button.active {
-  background-color: #31374b; /* Darker color for active tab */
+  background-color: #A25352;
   cursor: default; /* Disable cursor when active */
 }
 

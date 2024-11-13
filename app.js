@@ -15,20 +15,16 @@ const User = require('./models/User');
 const Report = require('./models/Report');
 
 const app = express();
-app.use(express.json()); // This is crucial!
+app.use(express.json()); 
 
-const allowedOrigins = process.env.CORS_ORIGIN.split(',');
-// console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
-// console.log('Allowed Origins:', allowedOrigins);
-
+const allowedOrigins = ['http://localhost:3000', 'http://142.93.112.132'];  // Add all allowed origins
 app.use(cors({
   origin: function (origin, callback) {
-      console.log(`Incoming request from origin: ${origin}`);
-      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-          callback(null, true);
-      } else {
-          callback(new Error('Not allowed by CORS'));
-      }
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
