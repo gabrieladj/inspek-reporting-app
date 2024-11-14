@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 //console.log("API URL:", process.env.REACT_APP_API_URL);
 
-const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const apiUrl = process.env.REACT_APP_API_URL || '/api';
 console.log("API URL:", apiUrl);
 
 function Login() {
