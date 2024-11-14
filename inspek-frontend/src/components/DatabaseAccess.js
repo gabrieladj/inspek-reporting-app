@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
+
 const DatabaseAccess = () => {
     const [reports, setReports] = useState([]);
     const [error, setError] = useState(null);
-
-    const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
 
     useEffect(() => {
         axios.get(`${API_BASE_URL}/reports`)
