@@ -14,7 +14,7 @@ const ClientInfo = () => {
     contactPhone: '',
   });
 
-  const navigate = useNavigate();
+//  const navigate = useNavigate();
 
   const handleUploadSelection = (type) => {
     setSelectedUpload(type);
