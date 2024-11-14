@@ -5,24 +5,23 @@ const DatabaseAccess = () => {
     const [reports, setReports] = useState([]);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-      fetch("http://localhost:3001/api/reports")
-          .then(response => response.json())
-          .then(data => {
-              if (Array.isArray(data)) {
-                  setReports(data);
-              } else {
-                  console.error("Expected an array but got:", data);
-              }
-          })
-          .catch(error => console.error("Error fetching reports:", error));
-  }, []);
-  
+    const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
 
-    // Handle delete
+    useEffect(() => {
+        axios.get(`${API_BASE_URL}/reports`)
+            .then(response => {
+                if (Array.isArray(response.data)) {
+                    setReports(response.data);
+                } else {
+                    console.error("Expected an array but got:", response.data);
+                }
+            })
+            .catch(error => console.error("Error fetching reports:", error));
+    }, []);
+  
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:3001/api/reports/${id}`);
+            await axios.delete(`/api/reports/${id}`);
             setReports(reports.filter((report) => report._id !== id)); // Remove deleted report from the state
         } catch (err) {
             setError('Failed to delete report');
@@ -35,7 +34,7 @@ const DatabaseAccess = () => {
       marginTop: '20px',
     };
   
-  const thTdStyles = {
+    const thTdStyles = {
       border: '1px solid #ddd',
       padding: '8px',
       textAlign: 'center',
