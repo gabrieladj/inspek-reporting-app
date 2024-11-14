@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard.js';
 import DatabaseAccess from './components/DatabaseAccess.js';
 import ReportGeneration from './components/ReportGeneration.js';
 import ViewDrafts from './components/ViewDrafts.js';
+import ClientInfo from './components/ClientInfo.js';
 import PrivateRoute from './components/PrivateRoute';
 import { useState } from 'react';
 import Layout from './components/Layout'
@@ -31,6 +32,7 @@ function App() {
                     {/* Private route for other components using Layout */}
                   <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/client-info" element={<ClientInfo />} />
                   <Route path="/report-generation" element={<ReportGeneration />} />
                   <Route path="/view-drafts" element={<ViewDrafts />} />
                   <Route path="/database-access" element={<DatabaseAccess />} />

@@ -1,0 +1,51 @@
+.report-generation-container {
+    padding: 20px;
+    width: 50%;
+    margin: auto;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .report-generation-button {
+    padding: 10px 20px;
+    background-color: #a25352;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .report-generation-button:hover {
+    background-color: #7f4140;
+  }
+  
+  .existing-client-bubble button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  .bubble-button.selected {
+    background-color: #a25352; /* Green for selected */
+    color: white;
+  }
+  
+  .bubble-button {
+    background-color: #f0f0f0; /* Light gray for unselected */
+  }
