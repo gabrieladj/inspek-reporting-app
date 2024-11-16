@@ -10,9 +10,11 @@ const bcrypt = require('bcrypt');
 const port = 3001;  // Backend running on this port
 const secretKey = process.env.JWT_SECRET; // for signing and verifying tokens
 const uri = process.env.MONGODB_URI;
+const router = express.Router();
 
 const User = require('./models/User');
 const Report = require('./models/Report');
+const Client = require('./models/Client');
 
 const app = express();
 app.use(express.json()); 
@@ -69,17 +71,64 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Route to serve index.html for '/login'
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
-});
 
-//test api route
-app.get('/test', (req, res) => {
-  res.send('Server is working!');
-});
-
+////////////////////////////
 //API ROUTES BELOW
+////////////////////////////
+
+app.post('/api/reports', async (req, res) => {
+  try {
+    // Extract report data
+    const { title, description, status, clientInfo, propertyInfo, inspectionScope, inspectionDetails } = req.body;
+
+    // Check if client exists in the Clients collection
+    if (clientInfo && clientInfo.clientName) {
+      const existingClient = await Client.findOne({ clientName: clientInfo.clientName });
+      if (existingClient) {
+        // Update client information if it already exists
+        await Client.updateOne(
+          { clientName: clientInfo.clientName },
+          { ...clientInfo } // Update with the latest clientInfo data
+        );
+      } else {
+        // Create a new client record if not found
+        const newClient = new Client(clientInfo);
+        await newClient.save();
+      }
+    }
+
+    // Save the report
+    const report = new Report({
+      title,
+      description,
+      status,
+      clientInfo, // Store client information in the report
+      propertyInfo,
+      inspectionScope,
+      inspectionDetails,
+    });
+
+    const savedReport = await report.save();
+    res.status(201).json(savedReport);
+  } catch (error) {
+    console.error('Error creating report:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/api/clients', async (req, res) => {
+  try {
+    const clients = await Client.find();
+    if (!clients || clients.length === 0) {
+      return res.status(404).json({ message: 'No clients found' });
+    }
+    res.json(clients);
+  } catch (error) {
+    console.error('Error fetching clients:', error);
+    res.status(500).json({ message: 'Failed to fetch clients.' });
+  }
+});
+
 // GET all reports
 app.get('/api/reports', async (req, res) => {
     try {
@@ -157,6 +206,16 @@ app.get('/api/reports', async (req, res) => {
       res.status(500).json({ message: 'Error deleting report' });
     }
   });
+
+    // Route to serve index.html for '/login'
+    app.get('/login', (req, res) => {
+      res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
+    });
+
+    //test api route
+    app.get('/test', (req, res) => {
+    res.send('Server is working!');
+    });
 
   // Serve static files from the `inspek-frontend/public` directory
   app.use(express.static(path.join(__dirname, 'inspek-frontend', 'build')));  
