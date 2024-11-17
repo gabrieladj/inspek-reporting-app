@@ -76,51 +76,51 @@ const ReportGeneration = () => {
     }
   };
 
-  const handleNumberOfBuildingsChange = (e) => {
-    const numberOfBuildings = parseInt(e.target.value);
-    const facades = Array(numberOfBuildings).fill(0);
-    setFormData((prevData) => ({
-      ...prevData,
-      numberOfBuildings,
-      facades,
-    }));
-  };
+  // const handleNumberOfBuildingsChange = (e) => {
+  //   const numberOfBuildings = parseInt(e.target.value);
+  //   const facades = Array(numberOfBuildings).fill(0);
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     numberOfBuildings,
+  //     facades,
+  //   }));
+  // };
 
-  const handleFacadeChange = (buildingIndex, e) => {
-    const updatedFacades = [...formData.facades];
-    updatedFacades[buildingIndex] = parseInt(e.target.value);
-    setFormData((prevData) => ({
-      ...prevData,
-      facades: updatedFacades,
-    }));
-  };
+  // const handleFacadeChange = (buildingIndex, e) => {
+  //   const updatedFacades = [...formData.facades];
+  //   updatedFacades[buildingIndex] = parseInt(e.target.value);
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     facades: updatedFacades,
+  //   }));
+  // };
 
-  const handleDeficiencyChange = (buildingIndex, facadeIndex, e) => {
-    const updatedDeficiencies = [...formData.deficiencies];
-    const selectedDeficiency = e.target.value;
+  // const handleDeficiencyChange = (buildingIndex, facadeIndex, e) => {
+  //   const updatedDeficiencies = [...formData.deficiencies];
+  //   const selectedDeficiency = e.target.value;
 
-    if (!updatedDeficiencies[buildingIndex]) {
-      updatedDeficiencies[buildingIndex] = [];
-    }
+  //   if (!updatedDeficiencies[buildingIndex]) {
+  //     updatedDeficiencies[buildingIndex] = [];
+  //   }
 
-    updatedDeficiencies[buildingIndex][facadeIndex] = selectedDeficiency;
-    setFormData((prevData) => ({
-      ...prevData,
-      deficiencies: updatedDeficiencies,
-    }));
-  };
+  //   updatedDeficiencies[buildingIndex][facadeIndex] = selectedDeficiency;
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     deficiencies: updatedDeficiencies,
+  //   }));
+  // };
 
-  const handleAddDeficiency = (buildingIndex, facadeIndex) => {
-    const updatedDeficiencies = [...formData.deficiencies];
-    if (!updatedDeficiencies[buildingIndex]) {
-      updatedDeficiencies[buildingIndex] = [];
-    }
-    updatedDeficiencies[buildingIndex][facadeIndex] = 'Other (please specify)';
-    setFormData((prevData) => ({
-      ...prevData,
-      deficiencies: updatedDeficiencies,
-    }));
-  };
+  // const handleAddDeficiency = (buildingIndex, facadeIndex) => {
+  //   const updatedDeficiencies = [...formData.deficiencies];
+  //   if (!updatedDeficiencies[buildingIndex]) {
+  //     updatedDeficiencies[buildingIndex] = [];
+  //   }
+  //   updatedDeficiencies[buildingIndex][facadeIndex] = 'Other (please specify)';
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     deficiencies: updatedDeficiencies,
+  //   }));
+  // };
 
   return (
     <div className="report-generation-container">
