@@ -3,13 +3,13 @@ import './ReportGeneration.css'; // Importing the CSS file for this component
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
 
-const preLoadedDeficiencies = [
-  "Crack in facade",
-  "Water leakage",
-  "Loose window",
-  "Roof damage",
-  "Chimney problem"
-];
+// const preLoadedDeficiencies = [
+//   "Crack in facade",
+//   "Water leakage",
+//   "Loose window",
+//   "Roof damage",
+//   "Chimney problem"
+// ];
 
 const ReportGeneration = () => {
   const [reportType, setReportType] = useState('proposal');
