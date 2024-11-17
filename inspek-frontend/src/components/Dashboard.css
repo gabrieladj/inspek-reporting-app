@@ -56,3 +56,42 @@
   opacity: 0.6;
   cursor: default;
 }
+
+.dashboard-container {
+  display: grid;
+  grid-template-areas:
+    "revenue newClients webTraffic"
+    "overview overview calendar";
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+  grid-template-rows: auto auto; /* Adjust height automatically */
+  gap: 20px; /* Space between grid items */
+  padding: 20px;
+}
+
+.dashboard-container > div {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+.revenue-widget {
+  grid-area: revenue;
+}
+
+.new-clients-widget {
+  grid-area: newClients;
+}
+
+.web-traffic-widget {
+  grid-area: webTraffic;
+}
+
+.overview-widget {
+  grid-area: overview;
+}
+
+.calendar-widget {
+  grid-area: calendar;
+}

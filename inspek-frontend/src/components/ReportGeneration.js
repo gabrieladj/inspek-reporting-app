@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ReportGeneration.css'; // Importing the CSS file for this component
 
-// Dummy deficiency data (replace with MongoDB data)
+const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
+
 const preLoadedDeficiencies = [
   "Crack in facade",
   "Water leakage",
@@ -11,38 +12,73 @@ const preLoadedDeficiencies = [
 ];
 
 const ReportGeneration = () => {
-  // Set "proposal" as the default value
-  const [reportType, setReportType] = useState('proposal');  
+  const [reportType, setReportType] = useState('proposal');
   const [formData, setFormData] = useState({
     clientName: '',
     clientAddress: '',
     propertyAddress: '',
     buildingType: '',
-    existingClient: 'no', // "yes" or "no"
-    numberOfBuildings: 1,
+    existingClient: 'yes', // Default to "Yes"
+    numberOfBuildings: 0,
     facades: [],
     deficiencies: [],
   });
+  const [clients, setClients] = useState([]);
+  const [selectedClient, setSelectedClient] = useState(null);
 
-  // Handle changes in form fields
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  useEffect(() => {
+    // Fetch clients from MongoDB
+    fetch(`${API_BASE_URL}/clients`)
+      .then((response) => response.json())
+      .then((data) => setClients(data))
+      .catch((error) => console.error('Error fetching clients:', error));
+  }, []);
 
   const handleExistingClientChange = (value) => {
     setFormData((prevData) => ({
       ...prevData,
       existingClient: value,
     }));
+
+    if (value === 'no') {
+      window.location.href = `/client-info`;
+    }
+  };
+
+  const handleClientSelect = (client) => {
+    setSelectedClient(client);
+  };
+
+  const handleGenerateReport = () => {
+    if (selectedClient) {
+      // POST request to backend to generate the proposal
+      fetch(`${API_BASE_URL}/generate-proposal`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ clientId: selectedClient._id }),
+      })
+        .then((response) => response.blob())
+        .then((blob) => {
+          // Create a link to download the generated proposal
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `Proposal-${selectedClient.clientName}.docx`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        })
+        .catch((error) => console.error('Error generating report:', error));
+    } else {
+      alert('Please select a client first!');
+    }
   };
 
   const handleNumberOfBuildingsChange = (e) => {
     const numberOfBuildings = parseInt(e.target.value);
-    const facades = Array(numberOfBuildings).fill(0); // Start with no facades selected
+    const facades = Array(numberOfBuildings).fill(0);
     setFormData((prevData) => ({
       ...prevData,
       numberOfBuildings,
@@ -117,45 +153,8 @@ const ReportGeneration = () => {
         </div>
       </div>
 
-      {/* Fields for Proposal */}
-      {reportType === 'proposal' && (
-        <div className="proposal-fields">
-          <div className="form-group">
-            <label>Client Name</label>
-            <input
-              type="text"
-              name="clientName"
-              value={formData.clientName}
-              onChange={handleChange}
-              placeholder="Enter client name"
-            />
-          </div>
-          <div className="form-group">
-            <label>Client Address</label>
-            <input
-              type="text"
-              name="clientAddress"
-              value={formData.clientAddress}
-              onChange={handleChange}
-              placeholder="Enter client address"
-            />
-          </div>
-          <div className="form-group">
-            <label>Property Address</label>
-            <input
-              type="text"
-              name="propertyAddress"
-              value={formData.propertyAddress}
-              onChange={handleChange}
-              placeholder="Enter property address"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Full Report Fields */}
-      {reportType === 'fullReport' && (
-        <div className="full-report-fields">
+      {['proposal', 'summaryReport', 'fullReport'].includes(reportType) && (
+        <div className="report-fields">
           <div className="form-group">
             <label>Is this an existing client?</label>
             <div className="existing-client-bubble">
@@ -174,75 +173,40 @@ const ReportGeneration = () => {
                 No
               </button>
             </div>
-          </div>
-
-          {/* Preload client fields if "Yes" */}
-          {formData.existingClient === 'yes' && (
-            <div className="preloaded-client-fields">
-              <p>Preloaded client details will go here (placeholder)</p>
-            </div>
-          )}
-
-          <div className="form-group">
-            <label>Number of Buildings</label>
-            <select
-              name="numberOfBuildings"
-              value={formData.numberOfBuildings}
-              onChange={handleNumberOfBuildingsChange}
-            >
-              {Array.from({ length: 10 }, (_, index) => (
-                <option key={index} value={index + 1}>
-                  {index + 1}
-                </option>
-              ))}
-            </select>
-          </div>
-          <hr />
-
-          {Array.from({ length: formData.numberOfBuildings }, (_, buildingIndex) => (
-            <div key={buildingIndex} className="building-fields">
-              <h3>Building {buildingIndex + 1}</h3>
-              <div className="form-group">
-                <label>Number of Facades</label>
-                <select
-                  value={formData.facades[buildingIndex] || 0}
-                  onChange={(e) => handleFacadeChange(buildingIndex, e)}
-                >
-                  {Array.from({ length: 8 }, (_, index) => (
-                    <option key={index} value={index + 1}>
-                      {index + 1}
-                    </option>
-                  ))}
-                </select>
+            {formData.existingClient === 'yes' && (
+              <div className="preloaded-client-fields">
+                <p>Please select client from DB to generate report:</p>
+                <table className="clients-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Address</th>
+                      <th>Select</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {clients.map((client) => (
+                      <tr key={client._id}>
+                        <td>{client.clientName}</td>
+                        <td>{client.clientAddress}</td>
+                        <td>
+                          <button onClick={() => handleClientSelect(client)}>
+                            {selectedClient?._id === client._id ? 'Selected' : 'Select'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-
-              {Array.from({ length: formData.facades[buildingIndex] || 0 }, (_, facadeIndex) => (
-                <div key={facadeIndex} className="facade-fields">
-                  <div className="form-group">
-                    <label>Deficiencies for Facade {facadeIndex + 1}</label>
-                    <select
-                      value={formData.deficiencies[buildingIndex]?.[facadeIndex] || ''}
-                      onChange={(e) => handleDeficiencyChange(buildingIndex, facadeIndex, e)}
-                    >
-                      <option value="">Select a deficiency</option>
-                      {preLoadedDeficiencies.map((deficiency, idx) => (
-                        <option key={idx} value={deficiency}>
-                          {deficiency}
-                        </option>
-                      ))}
-                    </select>
-                    <button type="button" onClick={() => handleAddDeficiency(buildingIndex, facadeIndex)}>
-                      Add Deficiency
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ))}
+            )}
+          </div>
         </div>
       )}
 
-      <button type="submit" className="report-generation-button">Generate Report</button>
+      <button type="button" className="report-generation-button" onClick={handleGenerateReport}>
+        Generate Report
+      </button>
     </div>
   );
 };

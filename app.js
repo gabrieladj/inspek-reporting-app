@@ -15,6 +15,7 @@ const router = express.Router();
 const User = require('./models/User');
 const Report = require('./models/Report');
 const Client = require('./models/Client');
+const { spawn } = require('child_process');
 
 const app = express();
 app.use(express.json()); 
@@ -207,6 +208,48 @@ app.get('/api/reports', async (req, res) => {
     }
   });
 
+  app.get('/api/dashboard-data', async (req, res) => {
+    try {
+      const data = {
+        revenue: 0, // Replace with actual data retrieval logic
+        newClients: 0,
+        webTraffic: 0,
+      };
+      res.json(data);
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+
+// Route for generating a proposal
+app.post('/api/generate-proposal', (req, res) => {
+  try {
+    const clientData = req.body;  // Ensure you're receiving the body as JSON
+    console.log(clientData);
+    
+    // Pass this data to the Python script, ensure it's correctly formatted
+    const pythonProcess = spawn('python', ['report_scripts/generate_proposal.py', JSON.stringify(clientData)]);
+    
+    pythonProcess.stdout.on('data', (data) => {
+      console.log(data.toString());
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      console.error(data.toString());
+    });
+
+    pythonProcess.on('close', (code) => {
+      console.log(`Python process closed with code ${code}`);
+      res.send('Report generated successfully');
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error generating report');
+  }
+});
+  
     // Route to serve index.html for '/login'
     app.get('/login', (req, res) => {
       res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));

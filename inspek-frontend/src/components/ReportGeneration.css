@@ -1,51 +1,90 @@
 .report-generation-container {
-    padding: 20px;
-    width: 50%;
-    margin: auto;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .report-generation-button {
-    padding: 10px 20px;
-    background-color: #a25352;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .report-generation-button:hover {
-    background-color: #7f4140;
-  }
-  
-  .existing-client-bubble button {
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-  }
-  
-  .bubble-button.selected {
-    background-color: #a25352; /* Green for selected */
-    color: white;
-  }
-  
-  .bubble-button {
-    background-color: #f0f0f0; /* Light gray for unselected */
-  }
+  padding: 20px;
+  width: 50%;
+  margin: auto;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.report-generation-button {
+  padding: 10px 20px;
+  background-color: #a25352;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.report-generation-button:hover {
+  background-color: #7f4140;
+}
+
+.existing-client-bubble button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.bubble-button.selected {
+  background-color: #a25352; /* Green for selected */
+  color: white;
+}
+
+.bubble-button {
+  background-color: #f0f0f0; /* Light gray for unselected */
+}
+
+/* Styles for the client table */
+.clients-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+}
+
+.clients-table th,
+.clients-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.clients-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.select-client-button {
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #a25352;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.select-client-button.selected {
+  background-color: #7f4140;
+}
+
+.select-client-button:hover {
+  background-color: #5a2f2f;
+}
