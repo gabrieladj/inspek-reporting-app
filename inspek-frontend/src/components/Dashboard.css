@@ -60,20 +60,39 @@
 .dashboard-container {
   display: grid;
   grid-template-areas:
+    "title title title"
     "revenue newClients webTraffic"
     "overview overview calendar";
   grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
-  grid-template-rows: auto auto; /* Adjust height automatically */
+  grid-template-rows: auto auto auto; /* Adjust height automatically */
   gap: 20px; /* Space between grid items */
   padding: 20px;
 }
 
-.dashboard-container > div {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
+.dashboard-title-container {
+  grid-area: title; /* Assign the title to the 'title' area */
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: left;
+  margin: 0; /* Remove extra margin to align perfectly */
+}
+
+/* Widget styles */
+.revenue-widget,
+.new-clients-widget,
+.web-traffic-widget,
+.overview-widget,
+.calendar-widget {
+  background-color: #ffffff; /* Ensure the widget background is white */
+  border: 1px solid #ccc; /* Light gray border for the box */
+  border-radius: 8px; /* Rounded corners */
+  padding: 20px; /* Space inside the box */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+  margin-bottom: 20px; /* Add spacing between widgets */
+  overflow: hidden; /* Prevent content overflow */
 }
 
 .revenue-widget {
@@ -94,4 +113,23 @@
 
 .calendar-widget {
   grid-area: calendar;
+}
+
+.dashboard-container {
+  padding: 20px;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 20px; /* Add some space between the title and the first widget */
+}
+
+.revenue-widget,
+.new-clients-widget,
+.web-traffic-widget,
+.overview-widget,
+.calendar-widget {
+  margin-bottom: 20px; /* Add spacing between widgets */
 }

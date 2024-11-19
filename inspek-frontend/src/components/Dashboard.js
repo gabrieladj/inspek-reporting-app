@@ -28,6 +28,9 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
+      <div className="dashboard-title-container">
+        <h1 className="dashboard-title">Welcome to the Dashboard</h1>
+      </div>
       <div className="revenue-widget">
         <RevenueWidget totalRevenue={revenue} />
       </div>
@@ -48,7 +51,7 @@ const Dashboard = () => {
         <CalendarWidget />
       </div>
     </div>
-  );
+  );  
 };
 
 export default Dashboard;
