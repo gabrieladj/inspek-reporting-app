@@ -30,19 +30,6 @@ const ClientInfo = () => {
     }));
   };
 
-  const handleSubmit = async () => {
-    try {
-      // Send client data to the backend to be saved or updated
-      const response = await axios.post('/api/reports', {
-        clientInfo: formData,  // Include form data in the request
-      });
-      alert('Client information submitted successfully!');
-    } catch (error) {
-      console.error('Error submitting client info:', error);
-      alert('Failed to submit client information');
-    }
-  };
-
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
