@@ -1,118 +1,68 @@
 .client-info-container {
-    padding: 20px;
-    position: relative;
-  }
-  
-  .file-upload-container {
-    margin-top: 20px;
-  }
-  
-  .bubble-button {
-    padding: 10px 20px;
-    cursor: pointer;
-    border: none;
-    border-radius: 20px;
-    margin: 10px;
-    background-color: #e0e0e0;
-    transition: background-color 0.3s ease;
-  }
-  
-  .bubble-button.selected {
-    background-color: #a25352;
-    color: white;
-  }
-  
-  .upload-box {
-    margin-top: 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    text-align: center;
-  }
-  
-  .upload-box p {
-    margin: 5px 0;
-  }
-  
-  .upload-button {
-    padding: 8px 16px;
-    font-size: 14px;
-    background-color: #b7807f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .manual-entry-fields .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .manual-entry-fields label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .manual-entry-fields input {
-    width: 100%;
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .toggle-container {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .toggle-switch {
-    width: 40px;
-    height: 20px;
-    background-color: #ccc;
-    border-radius: 15px;
-    position: relative;
-    margin-left: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .toggle-switch.active {
-    background-color: #a25352; /* Darker blue when active */
-  }
-  
-  .toggle-slider {
-    width: 18px;
-    height: 18px;
-    background-color: white;
-    border-radius: 50%;
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    transition: transform 0.3s ease;
-  }
-  
-  .toggle-slider.active {
-    transform: translateX(20px);
-  }
-  
-  .submit-container {
-    margin-top: 30px;
-    text-align: center;
-  }
-  
-  .submit-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #a25352;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
+  padding: 20px;
+  position: relative;
+}
+
+/* Title centered */
+.client-info-container h1 {
+  text-align: center;
+}
+
+/* Form group styling */
+.manual-entry-fields .form-group {
+  margin-bottom: 15px;
+  display: flex; /* Use flexbox to align label and input horizontally */
+  align-items: center; /* Vertically align the label and input field */
+}
+
+/* Left-align field labels and prevent wrapping */
+.manual-entry-fields label {
+  font-weight: bold;
+  margin-right: 10px; /* Add spacing between the label and input field */
+  width: 150px; /* Fixed width for labels */
+  text-align: left; /* Align text to the left */
+  white-space: nowrap; /* Prevent label text from wrapping */
+}
+
+/* Left-align field text and adjust width */
+.manual-entry-fields input {
+  width: 100%; /* Adjust to 100% of parent container */
+  max-width: 400px; /* Limit maximum field width */
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: left; /* Align text inside the fields to the left */
+  margin-left: 150px; /* Add some spacing between the input field and its label */
+}
+
+/* Submit button */
+.submit-container {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #a25352;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Apply Oswald font globally */
+body {
+  font-family: 'Bitter', sans-serif;
+}
+
+/* Use Bitter for paragraphs or specific elements */
+p, .some-class {
+  font-family: 'Bitter', serif;
+}
+
+/* For headers or titles, you could use Oswald */
+h1, h2, h3 {
+  font-family: 'Oswald', sans-serif;
+}
