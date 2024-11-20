@@ -22,10 +22,6 @@ const Layout = () => {
           <button className={getButtonClass('/dashboard')}>Home</button>
         </Link>
 
-        <Link to="/client-info">
-          <button className={getButtonClass('/client-info')}>Client Information</button>
-        </Link>
-
         <Link to="/report-generation">
           <button className={getButtonClass('/report-generation')}>Start New Report</button>
         </Link>
@@ -36,6 +32,10 @@ const Layout = () => {
 
         <Link to="/database-access">
           <button className={getButtonClass('/database-access')}>Access Database</button>
+        </Link>
+
+        <Link to="/client-info">
+          <button className={getButtonClass('/client-info')}>Add Client (manual)</button>
         </Link>
 
         <div className="logout-container">
