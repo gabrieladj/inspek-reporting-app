@@ -7,25 +7,35 @@ const ClientInfo = () => {
     clientName: '',
     clientAddress: '',
     propertyAddress: '',
-    buildingType: '',
-    contactPerson: '',
-    contactPhone: '',
+    propertyType: '',
+    yearBuilt: '',
+    totalBuildingSquareFootage: '',
+    numberOfFloors: '',
+    typeOfInspection: '',
+    droneImagery: false, // Default false, could be checkbox or dropdown for yes/no
+    preferredInspectionDate: '',
+    propertyRepresentativeName: '',
+    propertyRepresentativePhone: '',
+    propertyRepresentativeEmail: '',
+    mailingAddress: '',
+    roleOrRelationship: '',
+    onSiteContactName: '',
+    onSiteContactPhone: '',
+    onSiteContactEmail: '', // Optional
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
   const handleSubmit = async () => {
     try {
       // Send client data to the backend to be saved or updated
-      const response = await axios.post('https://your-live-backend.com/api/reports', {
-        clientInfo: formData,  // Include form data in the request
-      });
+      await axios.post(`${process.env.REACT_APP_API_URL}/clients`, formData);
       alert('Client information submitted successfully!');
     } catch (error) {
       console.error('Error submitting client info:', error);
@@ -35,7 +45,7 @@ const ClientInfo = () => {
 
   return (
     <div className="client-info-container">
-      <h2>Client Information</h2>
+      <h2>Add a Client Manually</h2>
 
       <div className="manual-entry-fields">
         <div className="form-group">
@@ -46,16 +56,7 @@ const ClientInfo = () => {
             value={formData.clientName}
             onChange={handleChange}
             placeholder="Enter client name"
-          />
-        </div>
-        <div className="form-group">
-          <label>Client Address</label>
-          <input
-            type="text"
-            name="clientAddress"
-            value={formData.clientAddress}
-            onChange={handleChange}
-            placeholder="Enter client address"
+            required
           />
         </div>
         <div className="form-group">
@@ -66,36 +67,169 @@ const ClientInfo = () => {
             value={formData.propertyAddress}
             onChange={handleChange}
             placeholder="Enter property address"
+            required
           />
         </div>
         <div className="form-group">
-          <label>Building Type</label>
+          <label>Property Type</label>
           <input
             type="text"
-            name="buildingType"
-            value={formData.buildingType}
+            name="propertyType"
+            value={formData.propertyType}
             onChange={handleChange}
-            placeholder="Enter building type"
+            placeholder="Enter property type"
+            required
           />
         </div>
         <div className="form-group">
-          <label>Contact Person</label>
+          <label>Year Built</label>
           <input
-            type="text"
-            name="contactPerson"
-            value={formData.contactPerson}
+            type="number"
+            name="yearBuilt"
+            value={formData.yearBuilt}
             onChange={handleChange}
-            placeholder="Enter contact person"
+            placeholder="Enter year built"
+            required
           />
         </div>
         <div className="form-group">
-          <label>Contact Phone</label>
+          <label>Total Building Square Footage</label>
+          <input
+            type="number"
+            name="totalBuildingSquareFootage"
+            value={formData.totalBuildingSquareFootage}
+            onChange={handleChange}
+            placeholder="Enter total building square footage"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Number of Floors</label>
+          <input
+            type="number"
+            name="numberOfFloors"
+            value={formData.numberOfFloors}
+            onChange={handleChange}
+            placeholder="Enter number of floors"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Type of Inspection</label>
           <input
             type="text"
-            name="contactPhone"
-            value={formData.contactPhone}
+            name="typeOfInspection"
+            value={formData.typeOfInspection}
             onChange={handleChange}
-            placeholder="Enter contact phone"
+            placeholder="Enter type of inspection"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Drone Imagery</label>
+          <input
+            type="checkbox"
+            name="droneImagery"
+            checked={formData.droneImagery}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>Preferred Inspection Date</label>
+          <input
+            type="date"
+            name="preferredInspectionDate"
+            value={formData.preferredInspectionDate}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Property Representative Name</label>
+          <input
+            type="text"
+            name="propertyRepresentativeName"
+            value={formData.propertyRepresentativeName}
+            onChange={handleChange}
+            placeholder="Enter property representative name"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Property Representative Phone</label>
+          <input
+            type="text"
+            name="propertyRepresentativePhone"
+            value={formData.propertyRepresentativePhone}
+            onChange={handleChange}
+            placeholder="Enter property representative phone"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Property Representative Email</label>
+          <input
+            type="email"
+            name="propertyRepresentativeEmail"
+            value={formData.propertyRepresentativeEmail}
+            onChange={handleChange}
+            placeholder="Enter property representative email"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Mailing Address</label>
+          <input
+            type="text"
+            name="mailingAddress"
+            value={formData.mailingAddress}
+            onChange={handleChange}
+            placeholder="Enter mailing address"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Role/Relationship to the Property</label>
+          <input
+            type="text"
+            name="roleOrRelationship"
+            value={formData.roleOrRelationship}
+            onChange={handleChange}
+            placeholder="Enter role/relationship to the property"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>On-Site Contact Name</label>
+          <input
+            type="text"
+            name="onSiteContactName"
+            value={formData.onSiteContactName}
+            onChange={handleChange}
+            placeholder="Enter on-site contact name"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>On-Site Contact Phone</label>
+          <input
+            type="text"
+            name="onSiteContactPhone"
+            value={formData.onSiteContactPhone}
+            onChange={handleChange}
+            placeholder="Enter on-site contact phone"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>On-Site Contact Email (Optional)</label>
+          <input
+            type="email"
+            name="onSiteContactEmail"
+            value={formData.onSiteContactEmail}
+            onChange={handleChange}
+            placeholder="Enter on-site contact email"
           />
         </div>
       </div>

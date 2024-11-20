@@ -7,9 +7,15 @@ const ClientSchema = new mongoose.Schema({
   propertyRepresentativeEmail: { type: String, required: true }, // Property Representative Email Address
   mailingAddress: { type: String, required: true }, // Mailing Address
   roleOrRelationship: { type: String, required: true }, // Role/Relationship to the Property
-  onSiteContactName: { type: String, required: false }, // On-Site Contact Name
-  onSiteContactPhone: { type: String, required: false }, // On-Site Contact Phone Number
-  onSiteContactEmail: { type: String, required: false }, // On-Site Contact Email Address
+  onSiteContactName: { type: String, required: true }, // On-Site Contact Name
+  onSiteContactPhone: { type: String, required: true }, // On-Site Contact Phone Number
+  onSiteContactEmail: { type: String, required: false }, // On-Site Contact Email Address (optional)
+  propertyAddress: { type: String, required: true }, // Property Address (required)
+
+  preferredInspectionDate: { type: Date }, // Not required
+  droneImagery: { type: Boolean }, // Not required
+  typeOfInspection: { type: String }, // Not required
+  numberOfFloors: { type: Number }, // Not required
 });
 
 module.exports = mongoose.model('Client', ClientSchema);

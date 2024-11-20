@@ -178,23 +178,6 @@ app.get('/api/reports/:id', async (req, res) => {
   }
 });
 
-// Create a new report (duplicate, remove if unnecessary)
-app.post('/api/reports', async (req, res) => {
-  const { title, description, status } = req.body;
-  try {
-    const newReport = new Report({
-      title,
-      description,
-      status,
-    });
-    await newReport.save();
-    res.status(201).json(newReport);
-  } catch (err) {
-    console.error('Error creating report:', err);
-    res.status(500).json({ message: 'Error creating report' });
-  }
-});
-
 // Update an existing report
 app.put('/api/reports/:id', async (req, res) => {
   const { title, description, status } = req.body;
@@ -233,13 +216,37 @@ app.delete('/api/reports/:id', async (req, res) => {
 
 // POST endpoint to create a new client
 app.post('/api/clients', async (req, res) => {
+  const requiredFields = [
+    'clientName',
+    'propertyRepresentativeName',
+    'propertyRepresentativePhone',
+    'propertyRepresentativeEmail',
+    'mailingAddress',
+    'clientName',
+    'roleOrRelationship',
+    'onSiteContactName',
+    'onSiteContactPhone',
+    'onSiteContactEmail',
+    'propertyAddress'
+  ];
+
+  const missingFields = requiredFields.filter(field => !req.body[field]);
+
+  if (missingFields.length) {
+    return res.status(400).json({ 
+      message: 'Missing required fields', 
+      missingFields 
+    });
+  }
+
   try {
-    const client = new Client(req.body);
-    await client.save();
-    res.status(201).json(client);
+    const newClient = new Client(req.body); // Properly define newClient
+    const savedClient = await newClient.save(); // Save the client to the database
+    console.log('Client saved successfully:', savedClient);
+    res.status(201).json({ message: 'Client saved successfully', clientId: savedClient._id });
   } catch (error) {
-    console.error('Error creating client:', error);
-    res.status(500).json({ message: 'Failed to create client.' });
+    console.error('Error saving client:', error.message);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
