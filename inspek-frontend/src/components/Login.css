@@ -70,3 +70,18 @@ html, body {
     height: auto; 
     margin-bottom: 20px;
   }
+
+  /* Apply Oswald font globally */
+body {
+  font-family: 'Bitter', sans-serif;
+}
+
+/* Use Bitter for paragraphs or specific elements */
+p, .some-class {
+  font-family: 'Bitter', serif;
+}
+
+/* For headers or titles, use Oswald */
+h1, h2, h3 {
+  font-family: 'Oswald', sans-serif;
+}

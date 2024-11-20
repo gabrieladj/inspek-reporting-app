@@ -74,6 +74,25 @@ app.post('/api/login', async (req, res) => {
 
 // API ROUTES BELOW
 
+// Route to get dashboard data
+app.get('/api/dashboard-data', async (req, res) => {
+  try {
+    // Get the total number of clients
+    const clientCount = await Client.countDocuments();
+
+    // add other data like revenue or web traffic here
+    // currently just client count
+    res.json({
+      revenue: 10000, // can pull this from database too
+      newClients: clientCount, // Dynamically fetched from MongoDB
+      webTraffic: 2000, // replace this with actual traffic data if available
+    });
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    res.status(500).json({ message: 'Error fetching dashboard data' });
+  }
+});
+
 // Route to handle data from Google Apps Script
 app.post('/api/google-data', async (req, res) => {
   try {
@@ -222,7 +241,6 @@ app.post('/api/clients', async (req, res) => {
     'propertyRepresentativePhone',
     'propertyRepresentativeEmail',
     'mailingAddress',
-    'clientName',
     'roleOrRelationship',
     'onSiteContactName',
     'onSiteContactPhone',

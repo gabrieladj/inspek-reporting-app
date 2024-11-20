@@ -62,7 +62,24 @@ p, .some-class {
   font-family: 'Bitter', serif;
 }
 
-/* For headers or titles, you could use Oswald */
+/* For headers or titles, use Oswald */
 h1, h2, h3 {
   font-family: 'Oswald', sans-serif;
+}
+
+.manual-entry-fields input {
+  width: 100%;
+  min-width: 200px; /* Prevent inputs from getting too small */
+  max-width: 400px; /* Keep inputs at a reasonable maximum width */
+}
+
+/* For small screens */
+@media (max-width: 768px) {
+  .manual-entry-fields {
+    width: 90%; /* Make the form take up most of the screen width */
+  }
+
+  .manual-entry-fields input {
+    max-width: 100%; /* Let inputs expand to the full width */
+  }
 }
