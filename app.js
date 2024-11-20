@@ -18,7 +18,7 @@ const Client = require('./models/Client');
 const { spawn } = require('child_process');
 
 const app = express();
-app.use(express.json()); 
+app.use(express.json());
 
 // Get the CORS origin(s) from the environment variable
 const allowedOrigins = process.env.CORS_ORIGIN.split(',');
@@ -41,15 +41,15 @@ const corsOptions = {
 // Apply CORS middleware to your Express app
 app.use(cors(corsOptions));
 
-//console.log("MongoDB URI:", process.env.MONGODB_URI);
+// MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Could not connect to MongoDB', err));
 
-  app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Credentials', 'true'); // Allow credentials
-    next();
-  });
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', 'true'); // Allow credentials
+  next();
+});
 
 // Login route
 app.post('/api/login', async (req, res) => {
@@ -72,15 +72,48 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// API ROUTES BELOW
 
-////////////////////////////
-//API ROUTES BELOW
-////////////////////////////
+// Route to handle data from Google Apps Script
+app.post('/api/google-data', async (req, res) => {
+  try {
+    const data = req.body; // Expecting data in JSON format
 
+    // Log incoming data for debugging
+    console.log('Received data from Google Apps Script:', data);
+
+    // Example: Validate incoming data (adjust fields based on your schema)
+    if (!data.title || !data.description || !data.clientInfo) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Save to MongoDB
+    const newReport = new Report({
+      title: data.title,
+      description: data.description,
+      clientInfo: data.clientInfo,
+      propertyInfo: data.propertyInfo || {}, // Optional fields
+      inspectionScope: data.inspectionScope || '',
+      inspectionDetails: data.inspectionDetails || '',
+    });
+
+    const savedReport = await newReport.save();
+    console.log('Saved report:', savedReport);
+
+    res.status(201).json({ message: 'Data saved successfully', reportId: savedReport._id });
+  } catch (error) {
+    console.error('Error saving data from Google Apps Script:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+// Create or update a report
 app.post('/api/reports', async (req, res) => {
   try {
-    // Extract report data
     const { title, description, status, clientInfo, propertyInfo, inspectionScope, inspectionDetails } = req.body;
+
+    let clientId = null;
 
     // Check if client exists in the Clients collection
     if (clientInfo && clientInfo.clientName) {
@@ -91,10 +124,12 @@ app.post('/api/reports', async (req, res) => {
           { clientName: clientInfo.clientName },
           { ...clientInfo } // Update with the latest clientInfo data
         );
+        clientId = existingClient._id; // Assign the existing client's _id to clientId
       } else {
         // Create a new client record if not found
         const newClient = new Client(clientInfo);
-        await newClient.save();
+        const savedClient = await newClient.save();
+        clientId = savedClient._id; // Assign the new client's _id to clientId
       }
     }
 
@@ -103,10 +138,10 @@ app.post('/api/reports', async (req, res) => {
       title,
       description,
       status,
-      clientInfo, // Store client information in the report
+      clientId, // Use the clientId now
       propertyInfo,
       inspectionScope,
-      inspectionDetails,
+      inspectionDetails
     });
 
     const savedReport = await report.save();
@@ -117,6 +152,98 @@ app.post('/api/reports', async (req, res) => {
   }
 });
 
+
+// Fetch all reports
+app.get('/api/reports', async (req, res) => {
+  try {
+    const reports = await Report.find();
+    res.json(reports);
+  } catch (err) {
+    console.error('Error fetching reports:', err);
+    res.status(500).json({ message: 'Error fetching reports' });
+  }
+});
+
+// Fetch a single report by ID
+app.get('/api/reports/:id', async (req, res) => {
+  try {
+    const report = await Report.findById(req.params.id);
+    if (!report) {
+      return res.status(404).json({ message: 'Report not found' });
+    }
+    res.json(report);
+  } catch (err) {
+    console.error('Error fetching report:', err);
+    res.status(500).json({ message: 'Error fetching report' });
+  }
+});
+
+// Create a new report (duplicate, remove if unnecessary)
+app.post('/api/reports', async (req, res) => {
+  const { title, description, status } = req.body;
+  try {
+    const newReport = new Report({
+      title,
+      description,
+      status,
+    });
+    await newReport.save();
+    res.status(201).json(newReport);
+  } catch (err) {
+    console.error('Error creating report:', err);
+    res.status(500).json({ message: 'Error creating report' });
+  }
+});
+
+// Update an existing report
+app.put('/api/reports/:id', async (req, res) => {
+  const { title, description, status } = req.body;
+  try {
+    const report = await Report.findById(req.params.id);
+    if (!report) {
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    report.title = title || report.title;
+    report.description = description || report.description;
+    report.status = status || report.status;
+    report.updatedAt = Date.now();
+
+    await report.save();
+    res.json(report);
+  } catch (err) {
+    console.error('Error updating report:', err);
+    res.status(500).json({ message: 'Error updating report' });
+  }
+});
+
+// Delete a report by ID
+app.delete('/api/reports/:id', async (req, res) => {
+  try {
+    const report = await Report.findByIdAndDelete(req.params.id);
+    if (!report) {
+      return res.status(404).json({ message: 'Report not found' });
+    }
+    res.status(204).send();
+  } catch (err) {
+    console.error('Error deleting report:', err);
+    res.status(500).json({ message: 'Error deleting report' });
+  }
+});
+
+// POST endpoint to create a new client
+app.post('/api/clients', async (req, res) => {
+  try {
+    const client = new Client(req.body);
+    await client.save();
+    res.status(201).json(client);
+  } catch (error) {
+    console.error('Error creating client:', error);
+    res.status(500).json({ message: 'Failed to create client.' });
+  }
+});
+
+// Get all clients
 app.get('/api/clients', async (req, res) => {
   try {
     const clients = await Client.find();
@@ -129,99 +256,6 @@ app.get('/api/clients', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch clients.' });
   }
 });
-
-// GET all reports
-app.get('/api/reports', async (req, res) => {
-    try {
-      const reports = await Report.find();
-      res.json(reports);
-    } catch (err) {
-      console.error('Error fetching reports:', err);
-      res.status(500).json({ message: 'Error fetching reports' });
-    }
-  });
-  
-  // GET a single report by ID
-  app.get('/api/reports/:id', async (req, res) => {
-    try {
-      const report = await Report.findById(req.params.id);
-      if (!report) {
-        return res.status(404).json({ message: 'Report not found' });
-      }
-      res.json(report);
-    } catch (err) {
-      console.error('Error fetching report:', err);
-      res.status(500).json({ message: 'Error fetching report' });
-    }
-  });
-  
-  // POST a new report
-  app.post('/api/reports', async (req, res) => {
-    const { title, description, status } = req.body;
-    try {
-      const newReport = new Report({
-        title,
-        description,
-        status,
-      });
-      await newReport.save();
-      res.status(201).json(newReport);
-    } catch (err) {
-      console.error('Error creating report:', err);
-      res.status(500).json({ message: 'Error creating report' });
-    }
-  });
-  
-  // PUT (update) an existing report
-  app.put('/api/reports/:id', async (req, res) => {
-    const { title, description, status } = req.body;
-    try {
-      const report = await Report.findById(req.params.id);
-      if (!report) {
-        return res.status(404).json({ message: 'Report not found' });
-      }
-  
-      report.title = title || report.title;
-      report.description = description || report.description;
-      report.status = status || report.status;
-      report.updatedAt = Date.now();
-  
-      await report.save();
-      res.json(report);
-    } catch (err) {
-      console.error('Error updating report:', err);
-      res.status(500).json({ message: 'Error updating report' });
-    }
-  });
-  
-  // DELETE a report by ID
-  app.delete('/api/reports/:id', async (req, res) => {
-    try {
-      const report = await Report.findByIdAndDelete(req.params.id);
-      if (!report) {
-        return res.status(404).json({ message: 'Report not found' });
-      }
-      res.status(204).send();
-    } catch (err) {
-      console.error('Error deleting report:', err);
-      res.status(500).json({ message: 'Error deleting report' });
-    }
-  });
-
-  app.get('/api/dashboard-data', async (req, res) => {
-    try {
-      const data = {
-        revenue: 0, // Replace with actual data retrieval logic
-        newClients: 0,
-        webTraffic: 0,
-      };
-      res.json(data);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
-  
 
 // Route for generating a proposal
 app.post('/api/generate-proposal', (req, res) => {
@@ -249,26 +283,26 @@ app.post('/api/generate-proposal', (req, res) => {
     res.status(500).send('Error generating report');
   }
 });
-  
-    // Route to serve index.html for '/login'
-    app.get('/login', (req, res) => {
-      res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
-    });
 
-    //test api route
-    app.get('/test', (req, res) => {
-    res.send('Server is working!');
-    });
+// Route to serve index.html for '/login'
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
+});
 
-  // Serve static files from the `inspek-frontend/public` directory
-  app.use(express.static(path.join(__dirname, 'inspek-frontend', 'build')));  
+// Test API route
+app.get('/test', (req, res) => {
+  res.send('Server is working!');
+});
 
-  // Serve index.html for the root URL - wildcard routes
-  app.get('/*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
-  });
+// Serve static files from the `inspek-frontend/public` directory
+app.use(express.static(path.join(__dirname, 'inspek-frontend', 'build')));
 
-  // Start server
-  app.listen(port, '0.0.0.0', () => {
-      console.log(`Server running on ${port}\n`);
-  });
+// Serve index.html for the root URL - wildcard routes
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'inspek-frontend', 'build', 'index.html'));
+});
+
+// Start server
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server running on ${port}\n`);
+});

@@ -43,6 +43,7 @@
   flex: 1; 
   padding: 20px; 
   overflow-y: auto; /* Allow scrolling if content exceeds available height */
+  background-color: #F4F4F4; /* bg color*/
 }
 
 /* Active tab styling */

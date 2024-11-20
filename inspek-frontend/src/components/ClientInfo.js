@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './ClientInfo.css';
 
 const ClientInfo = () => {
   const [isManualEntry, setIsManualEntry] = useState(false);
-  const [selectedUpload, setSelectedUpload] = useState('questionnaire'); // "questionnaire" or "onboarding"
+  const [selectedUpload, setSelectedUpload] = useState('questionnaire');
   const [formData, setFormData] = useState({
     clientName: '',
     clientAddress: '',
@@ -13,8 +13,6 @@ const ClientInfo = () => {
     contactPerson: '',
     contactPhone: '',
   });
-
-//  const navigate = useNavigate();
 
   const handleUploadSelection = (type) => {
     setSelectedUpload(type);
@@ -30,6 +28,34 @@ const ClientInfo = () => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      // Send client data to the backend to be saved or updated
+      const response = await axios.post('/api/reports', {
+        clientInfo: formData,  // Include form data in the request
+      });
+      alert('Client information submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting client info:', error);
+      alert('Failed to submit client information');
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('uploadType', selectedUpload);  // Send the type of upload
+
+    axios.post('/api/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+      .then(response => alert('File uploaded successfully!'))
+      .catch(error => console.error('Error uploading file:', error));
   };
 
   return (
@@ -57,56 +83,7 @@ const ClientInfo = () => {
                 placeholder="Enter client name"
               />
             </div>
-            <div className="form-group">
-              <label>Client Address</label>
-              <input
-                type="text"
-                name="clientAddress"
-                value={formData.clientAddress}
-                onChange={handleChange}
-                placeholder="Enter client address"
-              />
-            </div>
-            <div className="form-group">
-              <label>Property Address</label>
-              <input
-                type="text"
-                name="propertyAddress"
-                value={formData.propertyAddress}
-                onChange={handleChange}
-                placeholder="Enter property address"
-              />
-            </div>
-            <div className="form-group">
-              <label>Building Type</label>
-              <input
-                type="text"
-                name="buildingType"
-                value={formData.buildingType}
-                onChange={handleChange}
-                placeholder="Enter building type"
-              />
-            </div>
-            <div className="form-group">
-              <label>Contact Person</label>
-              <input
-                type="text"
-                name="contactPerson"
-                value={formData.contactPerson}
-                onChange={handleChange}
-                placeholder="Enter contact person"
-              />
-            </div>
-            <div className="form-group">
-              <label>Contact Phone</label>
-              <input
-                type="tel"
-                name="contactPhone"
-                value={formData.contactPhone}
-                onChange={handleChange}
-                placeholder="Enter contact phone"
-              />
-            </div>
+            {/* Additional fields here */}
           </div>
         ) : (
           // Upload section with "drag your file" prompt
@@ -125,14 +102,14 @@ const ClientInfo = () => {
             </button>
             <div className="upload-box">
               <p>Upload or drag your file here for {selectedUpload === 'questionnaire' ? 'Questionnaire' : 'Onboarding'}</p>
-              <button className="upload-button">Upload</button>
+              <input type="file" onChange={handleFileUpload} />
             </div>
           </div>
         )}
       </div>
 
       <div className="submit-container">
-        <button className="submit-button">Submit</button>
+        <button className="submit-button" onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );
