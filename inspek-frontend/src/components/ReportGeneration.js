@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './ReportGeneration.css'; // Importing the CSS file for this component
+import './ReportGeneration.css';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
-
-// const preLoadedDeficiencies = [
-//   "Crack in facade",
-//   "Water leakage",
-//   "Loose window",
-//   "Roof damage",
-//   "Chimney problem"
-// ];
 
 const ReportGeneration = () => {
   const [reportType, setReportType] = useState('proposal');
@@ -18,16 +10,16 @@ const ReportGeneration = () => {
     clientAddress: '',
     propertyAddress: '',
     buildingType: '',
-    existingClient: 'yes', // Default to "Yes"
+    existingClient: '',
     numberOfBuildings: 0,
     facades: [],
     deficiencies: [],
   });
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [clientAction, setClientAction] = useState('');
 
   useEffect(() => {
-    // Fetch clients from MongoDB
     fetch(`${API_BASE_URL}/clients`)
       .then((response) => response.json())
       .then((data) => setClients(data))
@@ -41,7 +33,7 @@ const ReportGeneration = () => {
     }));
 
     if (value === 'no') {
-      window.location.href = `/client-info`;
+      setClientAction('');
     }
   };
 
@@ -51,17 +43,13 @@ const ReportGeneration = () => {
 
   const handleGenerateReport = () => {
     if (selectedClient) {
-      // POST request to backend to generate the proposal
       fetch(`${API_BASE_URL}/generate-proposal`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clientId: selectedClient._id }),
       })
         .then((response) => response.blob())
         .then((blob) => {
-          // Create a link to download the generated proposal
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
@@ -76,51 +64,9 @@ const ReportGeneration = () => {
     }
   };
 
-  // const handleNumberOfBuildingsChange = (e) => {
-  //   const numberOfBuildings = parseInt(e.target.value);
-  //   const facades = Array(numberOfBuildings).fill(0);
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     numberOfBuildings,
-  //     facades,
-  //   }));
-  // };
-
-  // const handleFacadeChange = (buildingIndex, e) => {
-  //   const updatedFacades = [...formData.facades];
-  //   updatedFacades[buildingIndex] = parseInt(e.target.value);
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     facades: updatedFacades,
-  //   }));
-  // };
-
-  // const handleDeficiencyChange = (buildingIndex, facadeIndex, e) => {
-  //   const updatedDeficiencies = [...formData.deficiencies];
-  //   const selectedDeficiency = e.target.value;
-
-  //   if (!updatedDeficiencies[buildingIndex]) {
-  //     updatedDeficiencies[buildingIndex] = [];
-  //   }
-
-  //   updatedDeficiencies[buildingIndex][facadeIndex] = selectedDeficiency;
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     deficiencies: updatedDeficiencies,
-  //   }));
-  // };
-
-  // const handleAddDeficiency = (buildingIndex, facadeIndex) => {
-  //   const updatedDeficiencies = [...formData.deficiencies];
-  //   if (!updatedDeficiencies[buildingIndex]) {
-  //     updatedDeficiencies[buildingIndex] = [];
-  //   }
-  //   updatedDeficiencies[buildingIndex][facadeIndex] = 'Other (please specify)';
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     deficiencies: updatedDeficiencies,
-  //   }));
-  // };
+  const handleClientActionChange = (action) => {
+    setClientAction(action);
+  };
 
   return (
     <div className="report-generation-container">
@@ -173,6 +119,7 @@ const ReportGeneration = () => {
                 No
               </button>
             </div>
+
             {formData.existingClient === 'yes' && (
               <div className="preloaded-client-fields">
                 <p>Please select client from DB to generate report:</p>
@@ -198,15 +145,60 @@ const ReportGeneration = () => {
                     ))}
                   </tbody>
                 </table>
+                <button type="button" className="report-generation-button" onClick={handleGenerateReport}>
+        Generate Report
+      </button>
               </div>
+            )}
+
+            {formData.existingClient === 'no' && (
+              <div className="client-action-options">
+  <label>Would you like to:</label>
+  <div className="client-action-bubble">
+    <button
+      type="button"
+      className={`bubble-button ${clientAction === 'viewForms' ? 'selected' : ''}`}
+      onClick={() => handleClientActionChange('viewForms')}
+    >
+      View Forms
+    </button>
+    <button
+      type="button"
+      className={`bubble-button ${clientAction === 'manual' ? 'selected' : ''}`}
+      onClick={() => handleClientActionChange('manual')}
+    >
+      Manual Entry
+    </button>
+  </div>
+
+  {clientAction === 'viewForms' && (
+    <div className="view-forms">
+      <button
+        className="link-button"
+        onClick={() => window.open('https://link-to-google-form.com', '_blank')}
+      >
+        View Forms
+      </button>
+    </div>
+  )}
+
+  {clientAction === 'manual' && (
+    <div className="manual-entry">
+      <button
+        className="link-button"
+        onClick={() => window.location.href = '/client-info'}
+      >
+        Manual Entry
+      </button>
+    </div>
+  )}
+</div>
+
             )}
           </div>
         </div>
       )}
 
-      <button type="button" className="report-generation-button" onClick={handleGenerateReport}>
-        Generate Report
-      </button>
     </div>
   );
 };

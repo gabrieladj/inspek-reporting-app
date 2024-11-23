@@ -7,6 +7,7 @@ import Login from './components/Login.js';
 import Dashboard from './components/Dashboard.js';
 import DatabaseAccess from './components/DatabaseAccess.js';
 import ReportGeneration from './components/ReportGeneration.js';
+import ClientProfile from './components/ClientProfile.js';
 import ViewDrafts from './components/ViewDrafts.js';
 import ClientInfo from './components/ClientInfo.js';
 import PrivateRoute from './components/PrivateRoute';
@@ -33,6 +34,7 @@ function App() {
               <Route path="/report-generation" element={<ReportGeneration />} />
               <Route path="/view-drafts" element={<ViewDrafts />} />
               <Route path="/database-access" element={<DatabaseAccess />} />
+              <Route path="/client-profile" element={<ClientProfile />} />
             </Route>
           </Routes>
         </Router>

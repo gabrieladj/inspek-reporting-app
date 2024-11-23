@@ -72,7 +72,9 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+////
 // API ROUTES BELOW
+////
 
 // Route to get dashboard data
 app.get('/api/dashboard-data', async (req, res) => {
@@ -93,35 +95,63 @@ app.get('/api/dashboard-data', async (req, res) => {
   }
 });
 
-// Route to handle data from Google Apps Script
-app.post('/api/google-data', async (req, res) => {
+// Routes to handle data from Google Apps Script -> goes to Client and Reports Collections
+
+// POST route for client data
+app.post('/api/client-data', async (req, res) => {
   try {
-    const data = req.body; // Expecting data in JSON format
+    const clientData = req.body;
 
-    // Log incoming data for debugging
-    console.log('Received data from Google Apps Script:', data);
-
-    // Example: Validate incoming data (adjust fields based on your schema)
-    if (!data.title || !data.description || !data.clientInfo) {
-      return res.status(400).json({ message: 'Missing required fields' });
+    // Validate required fields for client data
+    if (!clientData.clientName || !clientData.propertyRepresentativeName) {
+      return res.status(400).json({ message: 'Missing required client fields' });
     }
 
-    // Save to MongoDB
-    const newReport = new Report({
-      title: data.title,
-      description: data.description,
-      clientInfo: data.clientInfo,
-      propertyInfo: data.propertyInfo || {}, // Optional fields
-      inspectionScope: data.inspectionScope || '',
-      inspectionDetails: data.inspectionDetails || '',
+    // Check if the client already exists
+    let client = await Client.findOne({ clientName: clientData.clientName });
+    if (client) {
+      // Update existing client
+      Object.assign(client, clientData);
+      client = await client.save();
+    } else {
+      // Create a new client record
+      client = new Client(clientData);
+      client = await client.save();
+    }
+
+    res.status(201).json({ message: 'Client data processed successfully', clientId: client._id });
+  } catch (error) {
+    console.error('Error handling client data:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// POST route for report data
+app.post('/api/report-data', async (req, res) => {
+  try {
+    const reportData = req.body;
+
+    // Validate required fields for report data
+    if (!reportData.title || !reportData.description || !reportData.clientId) {
+      return res.status(400).json({ message: 'Missing required report fields' });
+    }
+
+    // Link the report to an existing client
+    const client = await Client.findById(reportData.clientId);
+    if (!client) {
+      return res.status(404).json({ message: 'Client not found' });
+    }
+
+    // Save the report
+    const report = new Report({
+      ...reportData,
+      clientId: client._id,
     });
 
-    const savedReport = await newReport.save();
-    console.log('Saved report:', savedReport);
-
-    res.status(201).json({ message: 'Data saved successfully', reportId: savedReport._id });
+    const savedReport = await report.save();
+    res.status(201).json({ message: 'Report data saved successfully', reportId: savedReport._id });
   } catch (error) {
-    console.error('Error saving data from Google Apps Script:', error);
+    console.error('Error handling report data:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

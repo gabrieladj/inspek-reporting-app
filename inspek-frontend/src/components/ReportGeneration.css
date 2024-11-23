@@ -42,15 +42,46 @@ input {
 }
 
 .bubble-button.selected {
-  background-color: #a25352; /* Green for selected */
+  background-color: #a25352; /* Selected button */
   color: white;
 }
 
 .bubble-button {
-  background-color: #f0f0f0; /* Light gray for unselected */
+  background-color: #f0f0f0; /* Unselected button */
 }
 
-/* Styles for the client table */
+.client-action-bubble button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.client-action-bubble .selected {
+  background-color: #a25352;
+  color: white;
+}
+
+.link-button {
+  background-color: #a25352;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  margin: 10px;
+}
+
+.link-button:hover {
+  background-color: #7f4140;
+}
+
+.view-forms, .manual-entry {
+  margin-top: 10px;
+}
+
 .clients-table {
   width: 100%;
   border-collapse: collapse;
@@ -69,22 +100,4 @@ input {
 .clients-table th {
   background-color: #f4f4f4;
   font-weight: bold;
-}
-
-.select-client-button {
-  padding: 5px 10px;
-  cursor: pointer;
-  background-color: #a25352;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.select-client-button.selected {
-  background-color: #7f4140;
-}
-
-.select-client-button:hover {
-  background-color: #5a2f2f;
 }
