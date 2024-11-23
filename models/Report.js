@@ -17,15 +17,14 @@ const reportSchema = new mongoose.Schema({
 
   inspectionScope: {
     typeOfInspection: { type: String, required: true }, // Type of Inspection
-    droneImagery: { type: Boolean, default: false }, // Drone Imagery
+    droneImagery: { type: Boolean, required: true  }, // Drone Imagery
     specificAreasOfConcern: { type: String, default: '' }, // Specific Areas of Concern
   },
 
   inspectionDetails: {
     preferredDate: { type: Date, default: null }, // Preferred Inspection Date
     preferredTime: { type: String, default: '' }, // Preferred Inspection Time
-    alternateDate1: { type: Date, default: null }, // Alternate Preferred Date 1
-    alternateDate2: { type: Date, default: null }, // Alternate Preferred Date 2
+    alternateDate: { type: Date, default: null }, // Alternate Preferred Date 1
     alternateTime: { type: String, default: '' }, // Alternate Preferred Time
     specialRequests: { type: String, default: '' }, // Other Specific Concerns/Requests
   },
@@ -33,6 +32,14 @@ const reportSchema = new mongoose.Schema({
   buildingDetails: {
     recentMaintenance: { type: String, default: '' }, // Recent maintenance/repair work details
     ongoingIssues: { type: String, default: '' }, // Ongoing/recurring maintenance issues
+    // New fields:
+    additionalSpaces: { type: String, default: '' }, // Set as optional
+    officeSpacePercentage: { type: Number, default: null },
+    warehouseSpacePercentage: { type: Number, default: null },
+    retailSpacePercentage: { type: Number, default: null },
+    manufacturingSpacePercentage: { type: Number, default: null },
+    otherSpacePercentage: { type: Number, default: null },
+    
     waterIntrusion: { type: String, default: '' }, // Water intrusion or leaks
     structuralIssues: { type: String, default: '' }, // Structural defects or damages
     plannedWork: { type: String, default: '' }, // Planned/ongoing work
@@ -45,7 +52,9 @@ const reportSchema = new mongoose.Schema({
     previousInspections: { type: String, default: '' }, // Details of previous inspections
     insuranceClaims: { type: String, default: '' }, // Previous insurance claims
     pestInfestations: { type: String, default: '' }, // Known pest infestations
+    specialAttention: { type: String, default: ''},
     hazardousMaterials: { type: String, default: '' }, // Hazardous materials
+    recentConstruction: {type: String, default: ''},
     accessibilityIssues: { type: String, default: '' }, // Accessibility issues (e.g., ADA compliance)
     structuralModifications: { type: String, default: '' }, // Known structural modifications
     warranties: { type: String, default: '' }, // Outstanding warranties/guarantees
