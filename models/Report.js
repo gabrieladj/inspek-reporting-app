@@ -26,7 +26,7 @@ const reportSchema = new mongoose.Schema({
     preferredTime: { type: String, default: '' }, // Preferred Inspection Time
     alternateDate: { type: Date, default: null }, // Alternate Preferred Date 1
     alternateTime: { type: String, default: '' }, // Alternate Preferred Time
-    specialRequests: { type: String, default: '' }, // Other Specific Concerns/Requests
+    additionalInfo: { type: String, default: '' }, // Other Specific Concerns/Requests
   },
 
   buildingDetails: {
@@ -51,6 +51,7 @@ const reportSchema = new mongoose.Schema({
     codeViolations: { type: String, default: '' }, // Open code violations
     previousInspections: { type: String, default: '' }, // Details of previous inspections
     insuranceClaims: { type: String, default: '' }, // Previous insurance claims
+    
     pestInfestations: { type: String, default: '' }, // Known pest infestations
     specialAttention: { type: String, default: ''},
     hazardousMaterials: { type: String, default: '' }, // Hazardous materials
