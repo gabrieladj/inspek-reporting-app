@@ -186,44 +186,46 @@ app.post('/api/reports', async (req, res) => {
   try {
     const { title, description, status, clientInfo, propertyInfo, inspectionScope, inspectionDetails } = req.body;
 
+    if (!title || !description || !clientInfo) {
+      return res.status(400).json({ message: 'Title, description, and clientInfo are required' });
+    }
+
     let clientId = null;
 
-    // Check if client exists in the Clients collection
+    // Check if client exists in the Clients collection, and either create or update client
     if (clientInfo && clientInfo.clientName) {
       const existingClient = await Client.findOne({ clientName: clientInfo.clientName });
       if (existingClient) {
-        // Update client information if it already exists
-        await Client.updateOne(
-          { clientName: clientInfo.clientName },
-          { ...clientInfo } // Update with the latest clientInfo data
-        );
-        clientId = existingClient._id; // Assign the existing client's _id to clientId
+        // Update existing client if found
+        await Client.updateOne({ clientName: clientInfo.clientName }, { $set: clientInfo });
+        clientId = existingClient._id; // Use the existing client's ID
       } else {
-        // Create a new client record if not found
+        // Create new client if not found
         const newClient = new Client(clientInfo);
         const savedClient = await newClient.save();
-        clientId = savedClient._id; // Assign the new client's _id to clientId
+        clientId = savedClient._id; // Use the new client's ID
       }
     }
 
-    // Save the report
+    // Create and save the report
     const report = new Report({
       title,
       description,
       status,
-      clientId, // Use the clientId now
+      clientId,
       propertyInfo,
       inspectionScope,
-      inspectionDetails
+      inspectionDetails,
     });
 
     const savedReport = await report.save();
-    res.status(201).json(savedReport);
+    res.status(201).json(savedReport); // Return the saved report
   } catch (error) {
     console.error('Error creating report:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 
 // Fetch all reports
