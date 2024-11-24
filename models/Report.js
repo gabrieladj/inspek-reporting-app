@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 
 const reportSchema = new mongoose.Schema({
-  clientInformation: { 
   title: { type: String, required: true }, // Could be generated or derived
   description: { type: String, default: '' },
   status: { type: String, enum: ['draft', 'done'], default: 'draft' },
   clientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true }, // Reference to the Client model
-  },
 
   propertyInfo: {
     propertyName: { type: String, required: false }, // Property Name

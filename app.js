@@ -182,10 +182,15 @@ app.post('/api/report-data', async (req, res) => {
 
 app.post('/api/create-report-outline', async (req, res) => {
   try {
-    // Assuming you get the necessary data in the body to create the report
     const { title, description, clientId, propertyInfo, inspectionScope, inspectionDetails, buildingDetails } = req.body;
 
-    // Create a new report outline in the database
+    // Step 1: Validate clientId exists in the database
+    const client = await Client.findById(clientId);
+    if (!client) {
+      return res.status(400).json({ message: 'Invalid clientId. Client not found.' });
+    }
+
+    // Step 2: Create the new report
     const newReport = new Report({
       title,
       description,
@@ -199,14 +204,14 @@ app.post('/api/create-report-outline', async (req, res) => {
     // Save the new report to the database
     const savedReport = await newReport.save();
 
-    // Populate the clientId to retrieve client details (e.g., clientName)
+    // Populate the clientId to retrieve client details
     const populatedReport = await savedReport.populate('clientId');
 
-    // Construct the report outline sections (you can modify this if needed)
+    // Step 3: Construct the report outline
     const sections = [
       { sectionName: 'Title', content: savedReport.title },
       { sectionName: 'Description', content: savedReport.description },
-      { sectionName: 'Client Information', content: `Client: ${savedReport.clientId.name}` },
+      { sectionName: 'Client Information', content: `Client: ${populatedReport.clientId.name}` },
       { sectionName: 'Property Information', content: `Property Name: ${savedReport.propertyInfo.propertyName}` },
       { sectionName: 'Inspection Scope', content: `Inspection Type: ${savedReport.inspectionScope.typeOfInspection}` },
       { sectionName: 'Inspection Details', content: `Preferred Date: ${savedReport.inspectionDetails.preferredDate}` },
@@ -220,8 +225,6 @@ app.post('/api/create-report-outline', async (req, res) => {
     res.status(500).json({ message: 'Error creating report outline' });
   }
 });
-
-
 
 
 // Create or update a report
