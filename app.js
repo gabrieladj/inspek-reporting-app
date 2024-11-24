@@ -180,6 +180,103 @@ app.post('/api/report-data', async (req, res) => {
   }
 });
 
+// Route to generate a report outline
+app.post('/api/create-report-outline', async (req, res) => {
+  try {
+    const reportId = req.body.reportId;
+
+    // Retrieve the report from the database
+    const report = await Report.findById(reportId).populate('clientId');
+
+    if (!report) {
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    // Construct the report outline sections
+    const sections = [
+      {
+        sectionName: 'Title',
+        content: report.title
+      },
+      {
+        sectionName: 'Description',
+        content: report.description
+      },
+      {
+        sectionName: 'Client Information',
+        content: `Client: ${report.clientId.name}, Contact: ${report.clientId.contactInfo}`
+      },
+      {
+        sectionName: 'Property Information',
+        content: `
+          Property Name: ${report.propertyInfo.propertyName || 'N/A'},
+          Property Address: ${report.propertyInfo.propertyAddress || 'N/A'},
+          Property Type: ${report.propertyInfo.propertyType || 'N/A'},
+          Year Built: ${report.propertyInfo.yearBuilt || 'N/A'},
+          Square Footage: ${report.propertyInfo.totalBuildingSqFt || 'N/A'},
+          Floors: ${report.propertyInfo.numFloors || 'N/A'}
+        `
+      },
+      {
+        sectionName: 'Inspection Scope',
+        content: `
+          Type of Inspection: ${report.inspectionScope.typeOfInspection || 'N/A'},
+          Drone Imagery: ${report.inspectionScope.droneImagery ? 'Yes' : 'No'},
+          Areas of Concern: ${report.inspectionScope.specificAreasOfConcern || 'N/A'}
+        `
+      },
+      {
+        sectionName: 'Inspection Details',
+        content: `
+          Preferred Date: ${report.inspectionDetails.preferredDate || 'N/A'},
+          Preferred Time: ${report.inspectionDetails.preferredTime || 'N/A'},
+          Alternate Date: ${report.inspectionDetails.alternateDate || 'N/A'},
+          Alternate Time: ${report.inspectionDetails.alternateTime || 'N/A'},
+          Additional Info: ${report.inspectionDetails.additionalInfo || 'N/A'}
+        `
+      },
+      {
+        sectionName: 'Building Details',
+        content: `
+          Recent Maintenance: ${report.buildingDetails.recentMaintenance || 'N/A'},
+          Ongoing Issues: ${report.buildingDetails.ongoingIssues || 'N/A'},
+          Additional Spaces: ${report.buildingDetails.additionalSpaces || 'N/A'},
+          Office Space Percentage: ${report.buildingDetails.officeSpacePercentage || 'N/A'},
+          Warehouse Space Percentage: ${report.buildingDetails.warehouseSpacePercentage || 'N/A'},
+          Retail Space Percentage: ${report.buildingDetails.retailSpacePercentage || 'N/A'},
+          Manufacturing Space Percentage: ${report.buildingDetails.manufacturingSpacePercentage || 'N/A'},
+          Other Space Percentage: ${report.buildingDetails.otherSpacePercentage || 'N/A'},
+          Water Intrusion: ${report.buildingDetails.waterIntrusion || 'N/A'},
+          Structural Issues: ${report.buildingDetails.structuralIssues || 'N/A'},
+          Planned Work: ${report.buildingDetails.plannedWork || 'N/A'},
+          HVAC Details: ${report.buildingDetails.hvacDetails || 'N/A'},
+          Specialized Systems: ${report.buildingDetails.specializedSystems || 'N/A'},
+          Utility Issues: ${report.buildingDetails.utilityIssues || 'N/A'},
+          Environmental Assessments: ${report.buildingDetails.environmentalAssessments || 'N/A'},
+          Environmental Concerns: ${report.buildingDetails.environmentalConcerns || 'N/A'},
+          Code Violations: ${report.buildingDetails.codeViolations || 'N/A'},
+          Previous Inspections: ${report.buildingDetails.previousInspections || 'N/A'},
+          Insurance Claims: ${report.buildingDetails.insuranceClaims || 'N/A'},
+          Pest Infestations: ${report.buildingDetails.pestInfestations || 'N/A'},
+          Special Attention: ${report.buildingDetails.specialAttention || 'N/A'},
+          Hazardous Materials: ${report.buildingDetails.hazardousMaterials || 'N/A'},
+          Recent Construction: ${report.buildingDetails.recentConstruction || 'N/A'},
+          Accessibility Issues: ${report.buildingDetails.accessibilityIssues || 'N/A'},
+          Structural Modifications: ${report.buildingDetails.structuralModifications || 'N/A'},
+          Warranties: ${report.buildingDetails.warranties || 'N/A'}
+        `
+      }
+    ];
+
+    // Respond with the generated report outline
+    res.status(200).json({ outline: sections });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error generating report outline' });
+  }
+});
+
+
 
 // Create or update a report
 app.post('/api/reports', async (req, res) => {
