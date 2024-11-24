@@ -6,30 +6,28 @@ const reportSchema = new mongoose.Schema({
   status: { type: String, enum: ['draft', 'done'], default: 'draft' },
   clientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true }, // Reference to the Client model
 
-  propertyInfo: {
+
     propertyName: { type: String, required: false }, // Property Name
     propertyAddress: { type: String, required: false }, // Property Address
     propertyType: { type: String, default: '' }, // Property Type
     yearBuilt: { type: Number, default: null }, // Year Built
     totalBuildingSqFt: { type: Number, default: null }, // Total Building Square Footage
     numFloors: { type: Number, default: null }, // Number of Floors
-  },
 
-  inspectionScope: {
+
+
     typeOfInspection: { type: String, required: false }, // Type of Inspection
     droneImagery: { type: Boolean, required: false  }, // Drone Imagery
     specificAreasOfConcern: { type: String, default: '' }, // Specific Areas of Concern
-  },
 
-  inspectionDetails: {
+
+
     preferredDate: { type: Date, default: null }, // Preferred Inspection Date
     preferredTime: { type: String, default: '' }, // Preferred Inspection Time
     alternateDate: { type: Date, default: null }, // Alternate Preferred Date 1
     alternateTime: { type: String, default: '' }, // Alternate Preferred Time
     additionalInfo: { type: String, default: '' }, // Other Specific Concerns/Requests
-  },
 
-  buildingDetails: {
     recentMaintenance: { type: String, default: '' }, // Recent maintenance/repair work details
     ongoingIssues: { type: String, default: '' }, // Ongoing/recurring maintenance issues
     // New fields:
@@ -59,7 +57,7 @@ const reportSchema = new mongoose.Schema({
     accessibilityIssues: { type: String, default: '' }, // Accessibility issues (e.g., ADA compliance)
     structuralModifications: { type: String, default: '' }, // Known structural modifications
     warranties: { type: String, default: '' }, // Outstanding warranties/guarantees
-  },
+
 
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
