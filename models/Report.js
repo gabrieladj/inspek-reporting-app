@@ -7,8 +7,8 @@ const reportSchema = new mongoose.Schema({
   clientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true }, // Reference to the Client model
 
   propertyInfo: {
-    propertyName: { type: String, required: true }, // Property Name
-    propertyAddress: { type: String, required: true }, // Property Address
+    propertyName: { type: String, required: false }, // Property Name
+    propertyAddress: { type: String, required: false }, // Property Address
     propertyType: { type: String, default: '' }, // Property Type
     yearBuilt: { type: Number, default: null }, // Year Built
     totalBuildingSqFt: { type: Number, default: null }, // Total Building Square Footage
@@ -16,8 +16,8 @@ const reportSchema = new mongoose.Schema({
   },
 
   inspectionScope: {
-    typeOfInspection: { type: String, required: true }, // Type of Inspection
-    droneImagery: { type: Boolean, required: true  }, // Drone Imagery
+    typeOfInspection: { type: String, required: false }, // Type of Inspection
+    droneImagery: { type: Boolean, required: false  }, // Drone Imagery
     specificAreasOfConcern: { type: String, default: '' }, // Specific Areas of Concern
   },
 
