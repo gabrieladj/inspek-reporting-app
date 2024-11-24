@@ -210,7 +210,7 @@ app.post('/api/create-report-outline', async (req, res) => {
     const sections = [
       { sectionName: 'Title', content: savedReport.title },
       { sectionName: 'Description', content: savedReport.description },
-      { sectionName: 'Client Information', content: `Client: ${populatedReport.clientId?.name || 'N/A'}` },
+      { sectionName: 'Client Information', content: `Client: ${client.clientName}` },
       { sectionName: 'Property Information', content: `Property Name: ${savedReport.propertyInfo.propertyName}` },
       { sectionName: 'Inspection Scope', content: `Inspection Type: ${savedReport.inspectionScope.typeOfInspection}` },
       { sectionName: 'Inspection Details', content: `Preferred Date: ${savedReport.inspectionDetails.preferredDate}` },
