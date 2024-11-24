@@ -170,6 +170,7 @@ app.post('/api/report-data', async (req, res) => {
       ...reportData,
       clientId: client._id,
     });
+    console.log('Final report payload:', reportData); //
 
     const savedReport = await report.save();
     res.status(201).json({ message: 'Report data saved successfully', reportId: savedReport._id });
