@@ -184,47 +184,47 @@ app.post('/api/create-report-outline', async (req, res) => {
   try {
     const { title, description, clientId, propertyInfo, inspectionScope, inspectionDetails, buildingDetails } = req.body;
 
-    // Step 1: Validate clientId exists in the database
+    // Step 1: Validate clientId exists
     const client = await Client.findById(clientId);
     if (!client) {
       return res.status(400).json({ message: 'Invalid clientId. Client not found.' });
     }
 
-    // Step 2: Create the new report
+    // Step 2: Create and save the report
     const newReport = new Report({
       title,
       description,
-      clientId, 
+      clientId,
       propertyInfo,
       inspectionScope,
       inspectionDetails,
       buildingDetails,
     });
 
-    // Save the new report to the database
     const savedReport = await newReport.save();
 
-    // Populate the clientId to retrieve client details
-    const populatedReport = await savedReport.populate('clientId');
+    // Step 3: Populate clientId
+    const populatedReport = await savedReport.populate({ path: 'clientId', select: 'name' });
 
-    // Step 3: Construct the report outline
+    // Step 4: Construct the report outline
     const sections = [
       { sectionName: 'Title', content: savedReport.title },
       { sectionName: 'Description', content: savedReport.description },
-      { sectionName: 'Client Information', content: `Client: ${populatedReport.clientId.name}` },
+      { sectionName: 'Client Information', content: `Client: ${populatedReport.clientId?.name || 'N/A'}` },
       { sectionName: 'Property Information', content: `Property Name: ${savedReport.propertyInfo.propertyName}` },
       { sectionName: 'Inspection Scope', content: `Inspection Type: ${savedReport.inspectionScope.typeOfInspection}` },
       { sectionName: 'Inspection Details', content: `Preferred Date: ${savedReport.inspectionDetails.preferredDate}` },
-      { sectionName: 'Building Details', content: `Recent Maintenance: ${savedReport.buildingDetails.recentMaintenance}` }
+      { sectionName: 'Building Details', content: `Recent Maintenance: ${savedReport.buildingDetails.recentMaintenance}` },
     ];
 
-    // Respond with the created report outline
+    // Step 5: Respond with the report outline
     res.status(200).json({ outline: sections });
   } catch (error) {
-    console.error(error);
+    console.error('Error:', error);
     res.status(500).json({ message: 'Error creating report outline' });
   }
 });
+
 
 
 // Create or update a report
