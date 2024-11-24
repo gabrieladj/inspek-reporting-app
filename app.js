@@ -189,7 +189,7 @@ app.post('/api/create-report-outline', async (req, res) => {
     const newReport = new Report({
       title,
       description,
-      clientId, // Assuming this is the client ID
+      clientId, 
       propertyInfo,
       inspectionScope,
       inspectionDetails,
@@ -198,6 +198,9 @@ app.post('/api/create-report-outline', async (req, res) => {
 
     // Save the new report to the database
     const savedReport = await newReport.save();
+
+    // Populate the clientId to retrieve client details (e.g., clientName)
+    const populatedReport = await savedReport.populate('clientId');
 
     // Construct the report outline sections (you can modify this if needed)
     const sections = [
