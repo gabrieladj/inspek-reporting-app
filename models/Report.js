@@ -5,7 +5,6 @@ const reportSchema = new mongoose.Schema({
   description: { type: String, default: '' },
   status: { type: String, enum: ['draft', 'done'], default: 'draft' },
   clientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true }, // Reference to the Client model
-  reportId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
 
   propertyInfo: {
     propertyName: { type: String, required: true }, // Property Name
