@@ -126,6 +126,29 @@ app.post('/api/client-data', async (req, res) => {
   }
 });
 
+// GET route to filter by clientName
+app.get('/api/client-data', async (req, res) => {
+  try {
+    const { clientName } = req.query;
+
+    if (!clientName) {
+      return res.status(400).json({ message: 'Client name is required for filtering' });
+    }
+
+    // Search for clients by clientName
+    const clients = await Client.find({ clientName: new RegExp(clientName, 'i') }); // Case-insensitive match
+
+    if (clients.length === 0) {
+      return res.status(404).json({ message: 'No clients found matching the given name' });
+    }
+
+    res.status(200).json(clients);
+  } catch (error) {
+    console.error('Error fetching client data:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // POST route for report data
 app.post('/api/report-data', async (req, res) => {
   try {
