@@ -126,16 +126,18 @@ const ReportGeneration = () => {
                 <table className="clients-table">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Address</th>
-                      <th>Select</th>
+                    <th>Client Name</th>
+                    <th>Property Name</th>
+                    <th>Description</th>
+                    <th>Select</th>
                     </tr>
                   </thead>
                   <tbody>
                     {clients.map((client) => (
                       <tr key={client._id}>
                         <td>{client.clientName}</td>
-                        <td>{client.clientAddress}</td>
+                        <td>{client.propertyName || 'N/A'}</td>
+                        <td>{client.description || 'N/A'}</td>
                         <td>
                           <button onClick={() => handleClientSelect(client)}>
                             {selectedClient?._id === client._id ? 'Selected' : 'Select'}

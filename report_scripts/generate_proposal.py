@@ -49,9 +49,9 @@ def generate_proposal(client_data):
 
     # Define placeholders and their corresponding keys in client_data
     placeholders = {
-        "[Client Name]": client_data["client_name"],
+        "{ClientName}": client_data["clientName"],
         "[Client's Company Name]": client_data["company_name"],
-        "[Client's Address]": client_data["address"],
+        "[Client's Address]": client_data["propertyAddress"],
         "[City, State, ZIP]": client_data["city_state_zip"],
         "[Date]": datetime.now().strftime("%B %d, %Y"),
         "[Property Address]": client_data["property_address"],

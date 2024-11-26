@@ -9,6 +9,8 @@ const DatabaseAccess = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    //pagination
+
     // Wrapping fetchData in useCallback to memoize it
     const fetchData = useCallback(async () => {
         setIsLoading(true);
@@ -48,10 +50,11 @@ const DatabaseAccess = () => {
         if (selectedCollection === 'reports') {
             return (
                 <>
+                    <th>Client Name</th>
+                    <th>Property Name</th>
                     <th>Title</th>
                     <th>Description</th>
                     <th>Status</th>
-                    <th>Client Name</th>
                     <th>Actions</th>
                 </>
             );
@@ -59,10 +62,10 @@ const DatabaseAccess = () => {
             return (
                 <>
                     <th>Client Name</th>
-                    <th>Company Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Contact Person</th>
+                    <th>Property Representative</th>
+                    <th>Property Rep. Email</th>
+                    <th>Property Rep. Phone</th>
+                    <th>Mailing Address</th>
                     <th>Actions</th>
                 </>
             );
@@ -73,10 +76,11 @@ const DatabaseAccess = () => {
         if (selectedCollection === 'reports') {
             return data.map((report) => (
                 <tr key={report._id}>
+                    <td>{report.clientInfo?.clientName || 'Unknown'}</td>
+                    <td>{report.propertyName || 'N/A'}</td>
                     <td>{report.title || 'N/A'}</td>
                     <td>{report.description || 'N/A'}</td>
                     <td>{report.status || 'N/A'}</td>
-                    <td>{report.clientInfo?.clientName || 'Unknown'}</td>
                     <td>
                         <button onClick={() => alert(JSON.stringify(report, null, 2))}>View Details</button>
                         <button onClick={() => handleDelete(report._id)}>Delete</button>
@@ -87,10 +91,10 @@ const DatabaseAccess = () => {
             return data.map((client) => (
                 <tr key={client._id}>
                     <td>{client.clientName || 'N/A'}</td>
-                    <td>{client.companyName || 'N/A'}</td>
-                    <td>{client.email || 'N/A'}</td>
-                    <td>{client.phoneNumber || 'N/A'}</td>
-                    <td>{client.contactPerson || 'N/A'}</td>
+                    <td>{client.propertyRepresentativeName || 'N/A'}</td>
+                    <td>{client.propertyRepresentativeEmail || 'N/A'}</td>
+                    <td>{client.propertyRepresentativePhone || 'N/A'}</td>
+                    <td>{client.mailingAddress || 'N/A'}</td>
                     <td>
                         <button onClick={() => alert(JSON.stringify(client, null, 2))}>View Details</button>
                         <button onClick={() => handleDelete(client._id)}>Delete</button>
