@@ -2,102 +2,100 @@ import os
 from docx import Document
 from datetime import datetime
 from dotenv import load_dotenv
-
 import sys
 import json
+import pymongo
+from bson import ObjectId  # Import ObjectId from bson
 
-# Receive data from the Flask API
-client_data = json.loads(sys.argv[1])  # Ensure correct parsing of input
-
-# Load environment variables from the .env file
+# Load environment variables
 load_dotenv()
 
 # Path to your proposal template
-TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')  # Read the template path from the .env file
+TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')
 
-# Check if TEMPLATE_PATH is set
 if TEMPLATE_PATH is None:
-    print("TEMPLATE_PATH environment variable is not set!")
-else:
-    print(f"TEMPLATE_PATH is set to: {TEMPLATE_PATH}")
+    print("Error: TEMPLATE_PATH is not set in the environment variables!")
+    sys.exit(1)
 
-# Receive data from the Flask API
-try:
-    client_data = json.loads(sys.argv[1])  # Ensure correct parsing of input
-except json.JSONDecodeError as e:
-    print(f"JSON Decode Error: {e}")
-    sys.exit(1)  # Exit the script if there's an issue
+# Normalize path separator for cross-platform compatibility
+TEMPLATE_FILE = os.path.join(TEMPLATE_PATH, 'proposal_template.docx')
 
-# Normalize path separator and ensure proper path handling across platforms
-TEMPLATE_FILE = os.path.join(os.getcwd(), TEMPLATE_PATH.replace('/', os.sep), 'proposal_template.docx')
+# Connect to MongoDB (adjust connection details as needed)
+client = pymongo.MongoClient(os.getenv("MONGODB_URI"))
+db = client.get_database()  # Use the correct database name
+client_collection = db["clients"]  # Use the correct collection name
+report_collection = db["reports"]  # Use the correct collection name
 
-def generate_proposal(client_data):
+def generate_proposal(client_id, report_id):
     """
-    This function generates a proposal document by replacing placeholders in the Word template.
-    
-    :param client_data: A dictionary containing the client details.
+    Generates a proposal document by replacing placeholders in the Word template.
+    Fetches client and report data from the database based on provided IDs.
+
+    :param client_id: MongoDB ObjectId for the client.
+    :param report_id: MongoDB ObjectId for the report.
     """
+    # Validate the client_id and report_id to ensure they are valid ObjectId strings
+    if not ObjectId.is_valid(client_id):
+        print(f"Error: Invalid client_id: {client_id}")
+        sys.exit(1)
+    if not ObjectId.is_valid(report_id):
+        print(f"Error: Invalid report_id: {report_id}")
+        sys.exit(1)
+
+    # Fetch client and report data from the database
+    client_data = client_collection.find_one({"_id": ObjectId(client_id)})
+    report_data = report_collection.find_one({"_id": ObjectId(report_id)})
+
+    if not client_data or not report_data:
+        print(f"Error: Client or Report not found for IDs: {client_id}, {report_id}")
+        sys.exit(1)
 
     # Check if the template exists
     if not os.path.exists(TEMPLATE_FILE):
-        print(f"Template not found: {TEMPLATE_FILE}")
-        return
+        print(f"Error: Template file not found at {TEMPLATE_FILE}")
+        sys.exit(1)
 
     # Load the template
     doc = Document(TEMPLATE_FILE)
-    print(f"Template loaded: {TEMPLATE_FILE}")
 
-    # Define placeholders and their corresponding keys in client_data
+    # Define placeholders and map them to data from client_data and report_data
     placeholders = {
-        "{ClientName}": client_data["clientName"],
-        "[Client's Company Name]": client_data["company_name"],
-        "[Client's Address]": client_data["propertyAddress"],
-        "[City, State, ZIP]": client_data["city_state_zip"],
-        "[Date]": datetime.now().strftime("%B %d, %Y"),
-        "[Property Address]": client_data["property_address"],
-        "[Type of Building]": client_data["building_type"],
-        "[Square Footage]": str(client_data["square_footage"]),
-        "[Structural Characteristics]": client_data["structural_characteristics"],
-        "[Unique Features]": client_data["unique_features"],
-        "[HVAC & Electrical Units]": client_data["hvac_electrical"],
-        "[Project Title]": client_data["project_title"],
+        "{clientName}": client_data.get("clientName", ""),
+        "{mailingAddress}": client_data.get("mailingAddress", ""),
+        "{propertyName}": report_data.get("propertyName", ""),
+        "{propertyAddress}": report_data.get("propertyAddress", ""),
+        "{officeSpacePercentage}": str(report_data.get("officeSpacePercentage", "")),
+        "{warehouseSpacePercentage}": str(report_data.get("warehouseSpacePercentage", "")),
+        "{retailSpacePercentage}": str(report_data.get("retailSpacePercentage", "")),
+        "{otherSpacePercentage}": str(report_data.get("otherSpacePercentage", "")),
+        "{propertyRepresentativeName}": report_data.get("propertyRepresentativeName", ""),
     }
-
-    # Debug: Print placeholders and their values
-    print("Replacing the following placeholders:")
-    for placeholder, value in placeholders.items():
-        print(f"{placeholder} -> {value}")
 
     # Replace placeholders in the document
     for paragraph in doc.paragraphs:
         for placeholder, value in placeholders.items():
             if placeholder in paragraph.text:
                 for run in paragraph.runs:
-                    if placeholder in run.text:
-                        print(f"Replacing '{placeholder}' with '{value}'")
-                        run.text = run.text.replace(placeholder, value)
+                    run.text = run.text.replace(placeholder, value)
 
     # Save the updated document
-    output_file = os.path.join(TEMPLATE_PATH, f"Proposal_{client_data['client_name']}.docx")
+    output_file = os.path.join(TEMPLATE_PATH, f"Proposal_{client_data['clientName']}.docx")
     doc.save(output_file)
-    print(f"Proposal generated and saved as {output_file}")
+    print(f"Proposal generated: {output_file}")
     return output_file
 
-
 if __name__ == "__main__":
-    # Example client data
-    client_data = {
-        "client_name": "Tori Lynn",
-        "company_name": "Lynn Enterprises",
-        "address": "789 Market St",
-        "city_state_zip": "Los Angeles, CA 90001",
-        "property_address": "101 Business Ave",
-        "building_type": "Steel Frame",
-        "square_footage": 15000,
-        "structural_characteristics": "Steel frame structure with reinforced concrete floors",
-        "unique_features": "Eco-friendly design, solar panels installed",
-        "hvac_electrical": "Central HVAC system, electrical system up to code",
-        "project_title": "Building Inspection Proposal"
-    }
-    
-    generate_proposal(client_data)
+    # Expecting JSON data passed as command-line argument
+    try:
+        input_data = json.loads(sys.argv[1])
+        client_id = input_data.get("client_id", "")
+        report_id = input_data.get("report_id", "")
+    except (IndexError, json.JSONDecodeError) as e:
+        print(f"Error processing input data: {e}")
+        sys.exit(1)
+
+    # Generate the proposal
+    output_file = generate_proposal(client_id, report_id)
+
+    # Output the file path for the frontend to handle download
+    print(json.dumps({"outputFile": output_file}))

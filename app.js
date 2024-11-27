@@ -275,15 +275,20 @@ app.post('/api/reports', async (req, res) => {
 
 
 // Fetch all reports
+// Fetch all reports with populated client data
 app.get('/api/reports', async (req, res) => {
   try {
-    const reports = await Report.find();
+    const reports = await Report.find()
+      .populate({ path: 'clientId', select: 'clientName' }); // Populate clientId with clientName
+
+    // Now, each report will include the clientName from the Client schema
     res.json(reports);
   } catch (err) {
     console.error('Error fetching reports:', err);
     res.status(500).json({ message: 'Error fetching reports' });
   }
 });
+
 
 // Fetch a single report by ID
 app.get('/api/reports/:id', async (req, res) => {
@@ -298,6 +303,19 @@ app.get('/api/reports/:id', async (req, res) => {
     res.status(500).json({ message: 'Error fetching report' });
   }
 });
+
+app.get('/api/reports/by-client/:clientId', async (req, res) => {
+  try {
+    const reports = await Report.find({ clientId: req.params.clientId })
+      .populate({ path: 'clientId', select: 'clientName' }); // Populate client info
+
+    res.json(reports);
+  } catch (err) {
+    console.error('Error fetching reports by client:', err);
+    res.status(500).json({ message: 'Error fetching reports by client' });
+  }
+});
+
 
 // Update an existing report
 app.put('/api/reports/:id', async (req, res) => {

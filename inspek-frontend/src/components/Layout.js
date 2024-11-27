@@ -26,12 +26,12 @@ const Layout = () => {
           <button className={getButtonClass('/report-generation')} style={{ fontFamily: 'Bitter, serif' }}>Start New Report</button>
         </Link>
 
-        <Link to="/view-drafts">
-          <button className={getButtonClass('/view-drafts')} style={{ fontFamily: 'Bitter, serif' }}>View Report Drafts</button>
-        </Link>
-
         <Link to="/database-access">
           <button className={getButtonClass('/database-access')} style={{ fontFamily: 'Bitter, serif' }}>Access Database</button>
+        </Link>
+
+        <Link to="/project-details">
+          <button className={getButtonClass('/project-details')} style={{ fontFamily: 'Bitter, serif' }}>View Project Details</button>
         </Link>
 
         <Link to="/client-profile">

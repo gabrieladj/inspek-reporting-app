@@ -44,6 +44,7 @@ input {
 .bubble-button.selected {
   background-color: #a25352; /* Selected button */
   color: white;
+  border: 2px solid #b47676; /* Add a border */
 }
 
 .bubble-button {
@@ -94,10 +95,87 @@ input {
 .clients-table td {
   border: 1px solid #ddd;
   padding: 8px;
-  text-align: left;
+  text-align: center;
 }
 
 .clients-table th {
   background-color: #f4f4f4;
   font-weight: bold;
+}
+
+.clients-table td {
+  text-align: center;
+}
+
+.select-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ccc;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
+
+.select-circle.selected {
+  background-color: #a25352; /* Selected circle color */
+}
+
+.report-generation-button {
+  padding: 10px 20px;
+  background-color: #a25352;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.report-generation-button:hover {
+  background-color: #7f4140;
+}
+
+.clients-table th.property-name-column,
+.clients-table td.property-name-column {
+  width: 200px; /* Adjust the width as needed */
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Pagination Controls */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px; /* Adds spacing between pagination and Generate button */
+}
+
+.pagination button {
+  padding: 10px 20px;
+  margin: 0 5px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+  background-color: #a25352; /* Change background on hover */
+  color: white;
+}
+
+.pagination span {
+  font-size: 16px;
+  margin: 0 10px;
+  color: #333;
+}
+
+.pagination button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+/* Adding some extra padding to the report generation button */
+.report-generation-button {
+  margin-top: 20px; /* Adds extra space between pagination and button */
 }
