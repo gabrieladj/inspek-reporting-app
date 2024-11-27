@@ -66,9 +66,6 @@ const ReportGeneration = () => {
     }
   };
 
-  const handleClientActionChange = (action) => {
-    setClientAction(action);
-  };
 
   return (
     <div className="report-generation-container">
