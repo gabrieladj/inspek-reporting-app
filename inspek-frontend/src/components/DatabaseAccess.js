@@ -60,7 +60,6 @@ const DatabaseAccess = () => {
                     <th>Property Name</th>
                     <th>Title</th>
                     <th>Description</th>
-                    {/* <th>Status</th> */}
                     <th>Actions</th>
                 </>
             );
@@ -84,18 +83,18 @@ const DatabaseAccess = () => {
         const itemsToShow = data.slice(startIndex, endIndex);
 
         if (selectedCollection === 'reports') {
-            return itemsToShow.map((report) => (
-                <tr key={`${report._id}-${report.clientId?._id}`}>
-                    <td>{report.clientId?.clientName || 'N/A'}</td>
-                    <td>{report.propertyInfo?.propertyName || 'N/A'}</td>
-                    <td>{report.title || 'N/A'}</td>
-                    <td>{report.description || 'N/A'}</td>
-                    {/* <td>{report.status || 'N/A'}</td> */}
-                    <td className="action-buttons">
-                        <button onClick={() => alert(JSON.stringify(report, null, 2))}>View Details</button>
-                        <button onClick={() => handleDelete(report._id)}>Delete</button>
-                    </td>
-                </tr>
+            return itemsToShow.map((item) => (
+                <tr key={item._id}>
+            {/* Ensure your columns are rendered correctly */}
+            <td>{item.clientName || 'N/A'}</td>
+            <td>{item.propertyInfo?.propertyName || 'N/A'}</td>
+            <td>{item.title || 'N/A'}</td>
+            <td>{item.description || 'N/A'}</td>
+            <td className="action-buttons">
+                <button onClick={() => alert(JSON.stringify(item, null, 2))}>View Details</button>
+                <button onClick={() => handleDelete(item._id)}>Delete</button>
+            </td>
+        </tr>
             ));
         } else if (selectedCollection === 'clients') {
             return itemsToShow.map((client) => (

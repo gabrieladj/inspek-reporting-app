@@ -28,12 +28,15 @@ table th {
     background-color: #f4f4f4;
 }
 
+/* Action buttons styling */
 .action-buttons {
     display: flex;
     justify-content: space-between; /* Spread buttons evenly */
     gap: 10px; /* Add spacing between buttons */
     align-items: center; /* Ensure buttons are vertically centered */
     flex-wrap: nowrap; /* Prevent buttons from stacking */
+    margin: 0; /* Ensure no extra margin around action buttons */
+    padding: 50; /* Remove any internal padding */
 }
 
 .action-buttons button {
@@ -45,26 +48,16 @@ table th {
     cursor: pointer;
     text-align: center; /* Ensure the text is centered */
     flex-shrink: 0; /* Prevent buttons from shrinking and causing wrapping */
+    box-sizing: border-box; /* Include padding and border in the button's total size */
 }
 
-
-.action-buttons button {
-    flex-grow: 1; /* Make sure both buttons grow equally */
-    padding: 5px 10px;
-    background-color: #A25352;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center; /* Ensure the text is centered */
-}
-
-
+/* Hover effect for buttons */
 .action-buttons button:hover {
     background-color: #7a3e3d;
 }
 
 
+/* Table styles */
 table th, table td {
     border: 1px solid #ddd;
     text-align: center; /* Center text for table headers and cells */
@@ -72,8 +65,10 @@ table th, table td {
     vertical-align: middle; /* Align cell content vertically */
     word-wrap: break-word; /* Ensure long text wraps properly */
     white-space: normal; /* Prevent text from overflowing */
+    box-sizing: border-box; /* Ensure padding does not affect box size */
 }
 
+/* Pagination styling */
 .pagination {
     margin-top: 20px;
     display: flex;
