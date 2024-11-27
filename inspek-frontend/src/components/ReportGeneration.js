@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './ReportGeneration.css';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
+const googleFormUrl = process.env.REACT_APP_GOOGLE_FORM_URL;
+
 
 const ReportGeneration = () => {
   const [reportType, setReportType] = useState('proposal');
@@ -148,59 +150,42 @@ const ReportGeneration = () => {
                   </tbody>
                 </table>
                 <button type="button" className="report-generation-button" onClick={handleGenerateReport}>
-        Generate Report
-      </button>
+                  Generate Report
+                </button>
               </div>
             )}
 
             {formData.existingClient === 'no' && (
               <div className="client-action-options">
-  <label>Would you like to:</label>
-  <div className="client-action-bubble">
-    <button
-      type="button"
-      className={`bubble-button ${clientAction === 'viewForms' ? 'selected' : ''}`}
-      onClick={() => handleClientActionChange('viewForms')}
-    >
-      View Forms
-    </button>
-    <button
-      type="button"
-      className={`bubble-button ${clientAction === 'manual' ? 'selected' : ''}`}
-      onClick={() => handleClientActionChange('manual')}
-    >
-      Manual Entry
-    </button>
-  </div>
-
-  {clientAction === 'viewForms' && (
-    <div className="view-forms">
-      <button
-        className="link-button"
-        onClick={() => window.open('https://link-to-google-form.com', '_blank')}
-      >
-        View Forms
-      </button>
-    </div>
-  )}
-
-  {clientAction === 'manual' && (
-    <div className="manual-entry">
-      <button
-        className="link-button"
-        onClick={() => window.location.href = '/client-info'}
-      >
-        Manual Entry
-      </button>
-    </div>
-  )}
-</div>
-
+                <p>Would you like to:</p>
+                
+                <div className="client-action-bubble">
+                <button
+                  type="button"
+                  className={`bubble-button ${clientAction === 'viewForms' ? 'selected' : ''}`}
+                  onClick={() => {
+                    if (googleFormUrl) {
+                      window.open(googleFormUrl, '_blank');
+                    } else {
+                      console.error('Google Form URL is not defined!');
+                    }
+                  }}
+                >
+                  View Forms
+                </button>
+                  <button
+                    type="button"
+                    className={`bubble-button ${clientAction === 'manual' ? 'selected' : ''}`}
+                    onClick={() => window.location.href = '/client-info'}
+                  >
+                    Manual Entry
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </div>
       )}
-
     </div>
   );
 };
