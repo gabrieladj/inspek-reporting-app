@@ -1,0 +1,96 @@
+.database-access {
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.collection-select {
+    margin-bottom: 20px;
+}
+
+.error {
+    color: red;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    text-align: center; /* Center text for table headers and cells */
+    padding: 8px;
+    vertical-align: middle; /* Align cell content vertically */
+}
+
+table th {
+    background-color: #f4f4f4;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-between; /* Spread buttons evenly */
+    gap: 10px; /* Add spacing between buttons */
+    align-items: center; /* Ensure buttons are vertically centered */
+    flex-wrap: nowrap; /* Prevent buttons from stacking */
+}
+
+.action-buttons button {
+    padding: 5px 10px;
+    background-color: #A25352;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center; /* Ensure the text is centered */
+    flex-shrink: 0; /* Prevent buttons from shrinking and causing wrapping */
+}
+
+
+.action-buttons button {
+    flex-grow: 1; /* Make sure both buttons grow equally */
+    padding: 5px 10px;
+    background-color: #A25352;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center; /* Ensure the text is centered */
+}
+
+
+.action-buttons button:hover {
+    background-color: #7a3e3d;
+}
+
+
+table th, table td {
+    border: 1px solid #ddd;
+    text-align: center; /* Center text for table headers and cells */
+    padding: 8px;
+    vertical-align: middle; /* Align cell content vertically */
+    word-wrap: break-word; /* Ensure long text wraps properly */
+    white-space: normal; /* Prevent text from overflowing */
+}
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    background-color: #be6666;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}

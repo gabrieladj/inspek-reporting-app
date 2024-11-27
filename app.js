@@ -316,6 +316,25 @@ app.get('/api/reports/by-client/:clientId', async (req, res) => {
   }
 });
 
+//DELETE route to delete a client by ID
+app.delete('/api/client-data/:id', async (req, res) => {
+  try {
+      const clientId = req.params.id;
+
+      // Try to find and delete the client
+      const client = await Client.findByIdAndDelete(clientId);
+
+      if (!client) {
+          return res.status(404).json({ message: 'Client not found' });
+      }
+
+      res.status(200).json({ message: 'Client deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting client:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 // Update an existing report
 app.put('/api/reports/:id', async (req, res) => {

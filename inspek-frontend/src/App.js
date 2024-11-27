@@ -34,7 +34,8 @@ function App() {
               <Route path="/report-generation" element={<ReportGeneration />} />
               <Route path="/project-details" element={<ProjectDetails />} />
               <Route path="/database-access" element={<DatabaseAccess />} />
-              <Route path="/client-profile" element={<ClientProfile />} />
+              {/* <Route path="/client-profile" element={<ClientProfile />} /> */}
+              <Route path="/client/:clientId" element={<ClientProfile />} />
             </Route>
           </Routes>
         </Router>
