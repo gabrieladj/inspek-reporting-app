@@ -421,6 +421,21 @@ app.get('/api/clients', async (req, res) => {
   }
 });
 
+// Get a specific client by ID
+app.get('/api/clients/:clientId', async (req, res) => {
+  try {
+    const client = await Client.findById(req.params.clientId);
+    if (!client) {
+      return res.status(404).json({ message: 'Client not found' });
+    }
+    res.json(client);
+  } catch (error) {
+    console.error('Error fetching client:', error);
+    res.status(500).json({ message: 'Failed to fetch client.' });
+  }
+});
+
+
 // Route for generating a proposal
 app.post('/api/generate-proposal', (req, res) => {
   try {

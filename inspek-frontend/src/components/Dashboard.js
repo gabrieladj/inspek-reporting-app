@@ -29,7 +29,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <div className="dashboard-title-container">
-        <h1 className="dashboard-title">Welcome to the Dashboard</h1>
+        <h2 className="dashboard-title">Welcome to the Dashboard</h2>
       </div>
       <div className="revenue-widget">
         <RevenueWidget totalRevenue={revenue} />

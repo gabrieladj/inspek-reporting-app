@@ -12,7 +12,6 @@
   width: 250px; /* Sidebar width */
   background-color: #3C3E49; 
   padding: 20px;
-  border-right: 1px solid #ccc; /* slight shadow */
   color: white;
   display: flex;
   flex-direction: column; /* Stack the sidebar items vertically */
@@ -21,6 +20,7 @@
 
 .sidebar h2 {
   margin-bottom: 20px; /* Space below the title */
+  color: white;
 }
 
 .sidebar-button {
@@ -40,8 +40,8 @@
 }
 
 .main-content {
+  padding-top: 20px;
   flex: 1; 
-  padding: 20px; 
   overflow-y: auto; /* Allow scrolling if content exceeds available height */
   background-color: #F4F4F4; /* bg color*/
 }
@@ -79,6 +79,7 @@
   font-weight: bold;
   text-align: left;
   margin: 0; /* Remove extra margin to align perfectly */
+  font: #000;
 }
 
 /* Widget styles */

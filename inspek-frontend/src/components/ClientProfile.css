@@ -1,24 +1,42 @@
-/* Add this in your CSS file for better styling */
 div {
-    font-family: Arial, sans-serif;
-  }
-  
-  h1, h2, h3 {
-    color: #333;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  table th, table td {
-    border: 1px solid #ddd;
-    text-align: left;
-    padding: 8px;
-  }
-  
-  table th {
-    background-color: #f4f4f4;
-  }
-  
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #fff;
+}
+
+h2, h3 {
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  text-align: left;
+  padding: 8px;
+}
+
+table th {
+  background-color: #f4f4f4;
+}
+
+/* Add a light grey line between client info and reports */
+.left-selection {
+  background-color: #d37765;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top:20px;
+}
+
+.main-content {
+  padding-top: 0 !important; /* Remove top padding specifically for this page */
+}

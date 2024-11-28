@@ -139,7 +139,7 @@ const DatabaseAccess = () => {
 
     return (
         <div className="database-access">
-            <h1>Database Access</h1>
+            <h2>Database Access</h2>
             {error && <p className="error">{error}</p>}
             <div className="collection-select">
                 <label htmlFor="collection-select">Select Collection:</label>
