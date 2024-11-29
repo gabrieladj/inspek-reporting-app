@@ -17,6 +17,7 @@
 
 /* Left-align field labels and prevent wrapping */
 .manual-entry-fields label {
+  padding-left: 20px;
   font-weight: bold;
   margin-right: 10px; /* Add spacing between the label and input field */
   width: 150px; /* Fixed width for labels */

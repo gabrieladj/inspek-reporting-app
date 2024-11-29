@@ -141,37 +141,25 @@ input {
   white-space: nowrap; /* Prevent text from wrapping */
 }
 
-/* Pagination Controls */
+/* Pagination styling */
 .pagination {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-bottom: 20px; /* Adds spacing between pagination and Generate button */
+  gap: 10px;
 }
 
 .pagination button {
-  padding: 10px 20px;
-  margin: 0 5px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.pagination button:hover {
-  background-color: #a25352; /* Change background on hover */
+  padding: 5px 10px;
+  background-color: #be6666;
   color: white;
-}
-
-.pagination span {
-  font-size: 16px;
-  margin: 0 10px;
-  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .pagination button:disabled {
-  background-color: #ddd;
+  background-color: #cccccc;
   cursor: not-allowed;
 }
 

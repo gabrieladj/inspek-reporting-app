@@ -81,20 +81,19 @@ const DatabaseAccess = () => {
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIndex = startIndex + ITEMS_PER_PAGE;
         const itemsToShow = data.slice(startIndex, endIndex);
-
+    
         if (selectedCollection === 'reports') {
             return itemsToShow.map((item) => (
                 <tr key={item._id}>
-            {/* Ensure your columns are rendered correctly */}
-            <td>{item.clientName || 'N/A'}</td>
-            <td>{item.propertyInfo?.propertyName || 'N/A'}</td>
-            <td>{item.title || 'N/A'}</td>
-            <td>{item.description || 'N/A'}</td>
-            <td className="action-buttons">
-                <button onClick={() => alert(JSON.stringify(item, null, 2))}>View Details</button>
-                <button onClick={() => handleDelete(item._id)}>Delete</button>
-            </td>
-        </tr>
+                    <td>{item.clientId?.clientName || 'N/A'}</td>
+                    <td>{item.propertyInfo?.propertyName || 'N/A'}</td>
+                    <td>{item.title || 'N/A'}</td>
+                    <td>{item.description || 'N/A'}</td>
+                    <td className="action-buttons">
+                        <button onClick={() => alert(JSON.stringify(item, null, 2))}>View Details</button>
+                        <button onClick={() => handleDelete(item._id)}>Delete</button>
+                    </td>
+                </tr>
             ));
         } else if (selectedCollection === 'clients') {
             return itemsToShow.map((client) => (
@@ -112,6 +111,7 @@ const DatabaseAccess = () => {
             ));
         }
     };
+    
 
     const renderPagination = () => {
         const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
