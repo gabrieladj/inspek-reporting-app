@@ -46,21 +46,44 @@ const ReportGeneration = () => {
   };
 
   const handleClientSelect = (report) => {
-    setSelectedClient((prevSelectedClient) =>
-      prevSelectedClient?._id === report._id ? null : report // Deselect if same report
-    );
+    const isSelected = selectedClient?._id === report._id;
+    const newSelection = isSelected ? null : report;
+  
+    console.log("Selected client:", newSelection); // Add this log to check the selected client
+  
+    setSelectedClient(newSelection);
   };
+  
 
   // Handle report generation based on selected report
   const handleGenerateReport = () => {
     if (selectedClient) {
-      fetch(`${API_BASE_URL}/generate-proposal`, {
+      const requestBody = { reportId: selectedClient._id };
+      const endpoint = `${API_BASE_URL}/generate-proposal`;
+  
+      // Log the data and endpoint before making the request
+      console.log('POST request to:', endpoint);
+      console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
+  
+      fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reportId: selectedClient._id }), // Use report._id here
+        body: JSON.stringify(requestBody),
       })
-        .then((response) => response.blob())
+        .then((response) => {
+          // Log response status
+          console.log('Response status:', response.status);
+  
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+  
+          return response.blob();
+        })
         .then((blob) => {
+          // Log success before creating the download link
+          console.log('Blob received, creating download link...');
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
@@ -69,11 +92,15 @@ const ReportGeneration = () => {
           a.click();
           a.remove();
         })
-        .catch((error) => console.error('Error generating report:', error));
+        .catch((error) => {
+          // Log any errors
+          console.error('Error generating report:', error);
+        });
     } else {
       alert('Please select a report first!');
     }
   };
+  
 
   // Pagination logic: calculate the reports to display based on the current page
   const indexOfLastReport = currentPage * reportsPerPage;

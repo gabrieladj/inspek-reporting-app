@@ -19,6 +19,8 @@ if TEMPLATE_PATH is None:
 
 # Normalize path separator for cross-platform compatibility
 TEMPLATE_FILE = os.path.join(TEMPLATE_PATH, 'proposal_template.docx')
+print(f"TEMPLATE_PATH: {TEMPLATE_PATH}")
+
 
 # Connect to MongoDB (adjust connection details as needed)
 client = pymongo.MongoClient(os.getenv("MONGODB_URI"))
@@ -27,38 +29,28 @@ client_collection = db["clients"]  # Use the correct collection name
 report_collection = db["reports"]  # Use the correct collection name
 
 def generate_proposal(client_id, report_id):
-    """
-    Generates a proposal document by replacing placeholders in the Word template.
-    Fetches client and report data from the database based on provided IDs.
-
-    :param client_id: MongoDB ObjectId for the client.
-    :param report_id: MongoDB ObjectId for the report.
-    """
-    # Validate the client_id and report_id to ensure they are valid ObjectId strings
     if not ObjectId.is_valid(client_id):
-        print(f"Error: Invalid client_id: {client_id}")
+        print("Error: Invalid client_id: {client_id}")
         sys.exit(1)
     if not ObjectId.is_valid(report_id):
-        print(f"Error: Invalid report_id: {report_id}")
+        print("Error: Invalid report_id: {report_id}")
         sys.exit(1)
 
-    # Fetch client and report data from the database
     client_data = client_collection.find_one({"_id": ObjectId(client_id)})
+    if not client_data:
+        print("Error: Client not found for ID: {client_id}")
+        sys.exit(1)
+
     report_data = report_collection.find_one({"_id": ObjectId(report_id)})
-
-    if not client_data or not report_data:
-        print(f"Error: Client or Report not found for IDs: {client_id}, {report_id}")
+    if not report_data:
+        print("Error: Report not found for ID: {report_id}")
         sys.exit(1)
 
-    # Check if the template exists
     if not os.path.exists(TEMPLATE_FILE):
-        print(f"Error: Template file not found at {TEMPLATE_FILE}")
+        print("Error: Template file not found at {TEMPLATE_FILE}")
         sys.exit(1)
 
-    # Load the template
     doc = Document(TEMPLATE_FILE)
-
-    # Define placeholders and map them to data from client_data and report_data
     placeholders = {
         "{clientName}": client_data.get("clientName", ""),
         "{mailingAddress}": client_data.get("mailingAddress", ""),
@@ -71,31 +63,44 @@ def generate_proposal(client_id, report_id):
         "{propertyRepresentativeName}": report_data.get("propertyRepresentativeName", ""),
     }
 
-    # Replace placeholders in the document
-    for paragraph in doc.paragraphs:
-        for placeholder, value in placeholders.items():
-            if placeholder in paragraph.text:
-                for run in paragraph.runs:
-                    run.text = run.text.replace(placeholder, value)
-
-    # Save the updated document
-    output_file = os.path.join(TEMPLATE_PATH, f"Proposal_{client_data['clientName']}.docx")
-    doc.save(output_file)
-    print(f"Proposal generated: {output_file}")
-    return output_file
-
-if __name__ == "__main__":
-    # Expecting JSON data passed as command-line argument
-    try:
-        input_data = json.loads(sys.argv[1])
-        client_id = input_data.get("client_id", "")
-        report_id = input_data.get("report_id", "")
-    except (IndexError, json.JSONDecodeError) as e:
-        print(f"Error processing input data: {e}")
+    print("Arguments passed to the script:", sys.argv)
+    if len(sys.argv) < 2:
+        print("Error: Insufficient arguments passed to the script.")
         sys.exit(1)
 
-    # Generate the proposal
-    output_file = generate_proposal(client_id, report_id)
+    # Parse client and report IDs from the argument
+    try:
+        data = json.loads(sys.argv[1])
+        client_id = data.get('clientId')
+        report_id = data.get('reportId')
+        print(f"Received clientId: {client_id}, reportId: {report_id}")
+    except json.JSONDecodeError as e:
+        print(f"Error parsing arguments: {e}")
+        sys.exit(1)
 
-    # Output the file path for the frontend to handle download
-    print(json.dumps({"outputFile": output_file}))
+
+    for placeholder, value in placeholders.items():
+        print(f"Replacing placeholder: {placeholder} with value: {value}")
+        for paragraph in doc.paragraphs:
+            if placeholder in paragraph.text:
+                print(f"Found placeholder: {placeholder} in paragraph: {paragraph.text}")
+                for run in paragraph.runs:
+                    if placeholder in run.text:
+                        print(f"Replacing in run: {run.text}")
+                        run.text = run.text.replace(placeholder, value)
+
+
+    output_file = os.path.join(
+    TEMPLATE_PATH, f"Proposal_{client_data['clientName']}_{report_data['propertyName']}.docx"
+    )
+    print(f"Saving document to: {output_file}")
+    doc.save(output_file)
+
+    if os.path.exists(output_file):
+        print(f"File saved successfully: {output_file}")
+    else:
+        print("Error: File did not save properly.")
+
+    if __name__ == "__main__":
+        print("Python script started")
+        generate_proposal(client_id, report_id)

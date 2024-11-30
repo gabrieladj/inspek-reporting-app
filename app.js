@@ -27,10 +27,9 @@ const allowedOrigins = process.env.CORS_ORIGIN.split(',');
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
-      // Allow the request if the origin is allowed
       callback(null, true);
     } else {
-      // Reject the request if the origin is not allowed
+      console.error(`Blocked by CORS: ${origin}`); // Debugging log
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -442,6 +441,7 @@ app.post('/api/generate-proposal', (req, res) => {
     const clientData = req.body;  // Ensure you're receiving the body as JSON
     console.log(clientData);
     
+    console.log('Running Python script with args:', clientData);
     // Pass this data to the Python script, ensure it's correctly formatted
     const pythonProcess = spawn('python', ['report_scripts/generate_proposal.py', JSON.stringify(clientData)]);
     

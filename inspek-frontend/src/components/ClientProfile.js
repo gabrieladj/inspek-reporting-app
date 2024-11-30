@@ -28,14 +28,15 @@ const ViewClientProfile = () => {
         setClientData(clientResponse.data);
 
         // Fetch reports associated with the client
-        const reportsResponse = await axios.get(`${API_BASE_URL}/reports?clientId=${clientId}`);
+      // Fetch reports associated with the client
+        const reportsResponse = await axios.get(`${API_BASE_URL}/reports/by-client/${clientId}`);
         console.log('Reports data:', reportsResponse.data);
         setReports(reportsResponse.data);
       } catch (err) {
         setError('Failed to fetch data.');
         console.error('Error fetching data:', err);
-      }
-    };
+        }
+      };
 
     fetchData();
   }, [clientId]); // Fetch data whenever clientId changes
