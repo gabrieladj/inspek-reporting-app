@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './DatabaseAccess.css'; // Importing the CSS file
+import ConfirmDeleteModal from './ConfirmDeleteModal';
+import './DatabaseAccess.css';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
-const ITEMS_PER_PAGE = 15; // Updated items per page
+const ITEMS_PER_PAGE = 15;
 
 const DatabaseAccess = () => {
     const [data, setData] = useState([]);
@@ -12,16 +13,17 @@ const DatabaseAccess = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [modalOpen, setModalOpen] = useState(false); // State for modal
+    const [clientToDelete, setClientToDelete] = useState(null); // State for client ID to delete
     const navigate = useNavigate();
 
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         setError(null);
-    
+
         try {
             const response = await axios.get(`${API_BASE_URL}/${selectedCollection}`);
             if (Array.isArray(response.data)) {
-                // Reverse the array directly since there's no `createdAt`
                 const sortedData = [...response.data].reverse();
                 setData(sortedData);
             } else {
@@ -34,70 +36,36 @@ const DatabaseAccess = () => {
             setIsLoading(false);
         }
     }, [selectedCollection]);
-    
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    const handleDelete = async (id) => {
+    const handleDeleteClient = async () => {
         try {
-            await axios.delete(`${API_BASE_URL}/${selectedCollection}/${id}`);
-            setData(data.filter((item) => item._id !== id));
+            if (clientToDelete) {
+                await axios.delete(`${API_BASE_URL}/clients/${clientToDelete}`);
+                setData(data.filter((item) => item._id !== clientToDelete));
+                setClientToDelete(null);
+                setModalOpen(false); // Close the modal
+            }
         } catch (err) {
             console.error('Delete error:', err.message);
-            setError('Failed to delete item.');
+            setError('Failed to delete client.');
         }
     };
 
-    const handleClientClick = (clientId) => {
-        navigate(`/client/${clientId}`);
-    };
-
-    const renderTableColumns = () => {
-        if (selectedCollection === 'reports') {
-            return (
-                <>
-                    <th>Client Name</th>
-                    <th>Property Name</th>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Actions</th>
-                </>
-            );
-        } else if (selectedCollection === 'clients') {
-            return (
-                <>
-                    <th>Client Name</th>
-                    <th>Property Representative</th>
-                    <th>Property Rep. Email</th>
-                    <th>Property Rep. Phone</th>
-                    <th>Mailing Address</th>
-                    <th>Actions</th>
-                </>
-            );
-        }
+    const handleDeleteClick = (clientId) => {
+        setClientToDelete(clientId);
+        setModalOpen(true); // Open the modal
     };
 
     const renderTableRows = () => {
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIndex = startIndex + ITEMS_PER_PAGE;
         const itemsToShow = data.slice(startIndex, endIndex);
-    
-        if (selectedCollection === 'reports') {
-            return itemsToShow.map((item) => (
-                <tr key={item._id}>
-                    <td>{item.clientId?.clientName || 'N/A'}</td>
-                    <td>{item.propertyInfo?.propertyName || 'N/A'}</td>
-                    <td>{item.title || 'N/A'}</td>
-                    <td>{item.description || 'N/A'}</td>
-                    <td className="action-buttons">
-                        <button onClick={() => alert(JSON.stringify(item, null, 2))}>View Details</button>
-                        <button onClick={() => handleDelete(item._id)}>Delete</button>
-                    </td>
-                </tr>
-            ));
-        } else if (selectedCollection === 'clients') {
+
+        if (selectedCollection === 'clients') {
             return itemsToShow.map((client) => (
                 <tr key={client._id}>
                     <td>{client.clientName || 'N/A'}</td>
@@ -106,37 +74,12 @@ const DatabaseAccess = () => {
                     <td>{client.propertyRepresentativePhone || 'N/A'}</td>
                     <td>{client.mailingAddress || 'N/A'}</td>
                     <td className="action-buttons">
-                        <button onClick={() => handleClientClick(client._id)}>View Details</button>
-                        <button onClick={() => handleDelete(client._id)}>Delete</button>
+                        <button onClick={() => navigate(`/client/${client._id}`)}>View Details</button>
+                        <button onClick={() => handleDeleteClick(client._id)}>Delete</button>
                     </td>
                 </tr>
             ));
         }
-    };
-    
-
-    const renderPagination = () => {
-        const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
-
-        if (totalPages <= 1) return null;
-
-        return (
-            <div className="pagination">
-                <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                >
-                    Previous
-                </button>
-                <span>Page {currentPage} of {totalPages}</span>
-                <button
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                >
-                    Next
-                </button>
-            </div>
-        );
     };
 
     return (
@@ -146,17 +89,16 @@ const DatabaseAccess = () => {
             <div className="collection-select">
                 <label htmlFor="collection-select">Select Collection:</label>
                 <select
-                id="collection-select"
-                value={selectedCollection}
-                onChange={(e) => {
-                    setSelectedCollection(e.target.value);
-                    setCurrentPage(1);
-                }}
-            >
-                <option value="clients">Clients</option>
-                <option value="reports">Reports</option>
-            </select>
-
+                    id="collection-select"
+                    value={selectedCollection}
+                    onChange={(e) => {
+                        setSelectedCollection(e.target.value);
+                        setCurrentPage(1);
+                    }}
+                >
+                    <option value="clients">Clients</option>
+                    <option value="reports">Reports</option>
+                </select>
             </div>
             {isLoading ? (
                 <p>Loading data...</p>
@@ -164,11 +106,37 @@ const DatabaseAccess = () => {
                 <>
                     <table>
                         <thead>
-                            <tr>{renderTableColumns()}</tr>
+                            <tr>
+                                {/* Render appropriate columns */}
+                                {selectedCollection === 'clients' ? (
+                                    <>
+                                        <th>Client Name</th>
+                                        <th>Property Representative</th>
+                                        <th>Property Rep. Email</th>
+                                        <th>Property Rep. Phone</th>
+                                        <th>Mailing Address</th>
+                                        <th>Actions</th>
+                                    </>
+                                ) : (
+                                    <>
+                                        <th>Client Name</th>
+                                        <th>Property Name</th>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Actions</th>
+                                    </>
+                                )}
+                            </tr>
                         </thead>
                         <tbody>{renderTableRows()}</tbody>
                     </table>
-                    {renderPagination()}
+                    {/* Render pagination if needed */}
+                    {/* Modal */}
+                    <ConfirmDeleteModal
+                        isOpen={modalOpen}
+                        onClose={() => setModalOpen(false)}
+                        onDelete={handleDeleteClient}
+                    />
                 </>
             )}
         </div>

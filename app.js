@@ -434,6 +434,28 @@ app.get('/api/clients/:clientId', async (req, res) => {
   }
 });
 
+// Delete client and associated reports
+app.delete('/api/clients/:id', async (req, res) => {
+  try {
+    const clientId = req.params.id;
+
+    // Find and delete the client
+    const client = await Client.findByIdAndDelete(clientId);
+
+    if (!client) {
+      return res.status(404).json({ message: 'Client not found' });
+    }
+
+    // Delete associated reports
+    await Report.deleteMany({ clientId: clientId });
+
+    res.status(200).json({ message: 'Client and associated reports deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting client:', error);
+    res.status(500).json({ message: 'Error deleting client' });
+  }
+});
+
 
 //route for python script to generate proposal
 app.post('/api/generate-report', async (req, res) => {
