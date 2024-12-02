@@ -435,31 +435,92 @@ app.get('/api/clients/:clientId', async (req, res) => {
 });
 
 
-// Route for generating a proposal
-app.post('/api/generate-proposal', (req, res) => {
+//route for python script to generate proposal
+app.post('/api/generate-report', async (req, res) => {
   try {
-    const clientData = req.body;  // Ensure you're receiving the body as JSON
-    console.log(clientData);
-    
-    console.log('Running Python script with args:', clientData);
-    // Pass this data to the Python script, ensure it's correctly formatted
-    const pythonProcess = spawn('python', ['report_scripts/generate_proposal.py', JSON.stringify(clientData)]);
-    
+    console.log('Received Request Body:', req.body);  // Add this log
+    const {
+      reportId,
+      clientName,
+      mailingAddress,
+      propertyName,
+      propertyAddress,
+      officeSpacePercentage,
+      warehouseSpacePercentage,
+      retailSpacePercentage,
+      otherSpacePercentage,
+      propertyRepresentativeName
+    } = req.body;  // Extract all required fields from the request body
+
+    // Fetch the report based on the reportId
+    const report = await Report.findById(reportId).populate('clientId', 'clientName mailingAddress propertyAddress propertyRepresentativeName');
+    if (!report) {
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    // Check for missing client data
+    if (!report.clientId) {
+      return res.status(400).json({ message: 'Client information is missing' });
+    }
+
+    // Fetch client details from the report
+    const clientId = report.clientId._id; // Client ID for the Python script
+    const reportClientName = report.clientId.clientName;
+    const reportMailingAddress = report.clientId.mailingAddress;
+    const reportPropertyAddress = report.clientId.propertyAddress;
+    const reportPropertyRepresentativeName = report.clientId.propertyRepresentativeName;
+
+    // Log client details to debug
+    console.log('Report Client Details:', {
+      clientId,
+      clientName: reportClientName,
+      mailingAddress: reportMailingAddress,
+      propertyAddress: reportPropertyAddress,
+      propertyRepresentativeName: reportPropertyRepresentativeName
+    });
+
+    //console.log("Populated Report Client:", report.clientId);
+
+    // File path for the generated proposal
+    const filePath = path.join(__dirname, 'uploads', `Proposal_${clientName}_${propertyName}.docx`);
+
+    // Call Python script using spawn, passing all necessary fields
+    const pythonProcess = spawn('python', [
+      path.join(__dirname, '/report_scripts/generate_proposal.py'), // Path to Python script
+      clientId.toString(), 
+      reportId.toString(), 
+      clientName, 
+      mailingAddress,
+      propertyName, 
+      propertyAddress, 
+      officeSpacePercentage, 
+      warehouseSpacePercentage, 
+      retailSpacePercentage, 
+      otherSpacePercentage, 
+      propertyRepresentativeName 
+    ]);
+
+    // Capture Python script stdout and stderr
     pythonProcess.stdout.on('data', (data) => {
-      console.log(data.toString());
+      console.log(`Python stdout: ${data}`);
     });
 
     pythonProcess.stderr.on('data', (data) => {
-      console.error(data.toString());
+      console.error(`Python stderr: ${data}`);
     });
 
     pythonProcess.on('close', (code) => {
-      console.log(`Python process closed with code ${code}`);
-      res.send('Report generated successfully');
+      if (code === 0) {
+        console.log(`Python script executed successfully, file saved: ${filePath}`);
+        res.json({ message: 'Report generated successfully', filePath });
+      } else {
+        console.error(`Python script exited with code ${code}`);
+        res.status(500).json({ message: 'Error generating report' });
+      }
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Error generating report');
+    console.error('Error generating report:', error);
+    res.status(500).json({ message: 'Error generating report' });
   }
 });
 

@@ -4,6 +4,7 @@ import './ReportGeneration.css';
 const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
 const googleFormUrl = process.env.REACT_APP_GOOGLE_FORM_URL;
 
+
 const ReportGeneration = () => {
   const [reportType, setReportType] = useState('proposal');
   const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ const ReportGeneration = () => {
   });
   const [reports, setReports] = useState([]); // State for storing reports
   const [selectedClient, setSelectedClient] = useState(null); // Start with no selected client
+  const [selectedReport, setSelectedReport] = useState(null);
   const [clientAction, setClientAction] = useState('');
 
   const reportsPerPage = 15; // Number of reports per page
@@ -45,26 +47,42 @@ const ReportGeneration = () => {
     }
   };
 
-  const handleClientSelect = (report) => {
-    const isSelected = selectedClient?._id === report._id;
+  const handleReportSelect = (report) => {
+    const isSelected = selectedReport?._id === report._id;
     const newSelection = isSelected ? null : report;
   
-    console.log("Selected client:", newSelection); // Add this log to check the selected client
-  
-    setSelectedClient(newSelection);
-  };
+    setSelectedReport(newSelection);
+    setSelectedClient(newSelection?.clientId || null); // Automatically associate the client
+
+    console.log('Selected Report:', newSelection); // Log the selected report here
+    console.log("Selected Report Client Data:", newSelection.clientId);
+
+  };  
   
 
-  // Handle report generation based on selected report
+  // Handle proposal generation based on selected report
   const handleGenerateReport = () => {
-    if (selectedClient) {
-      const requestBody = { reportId: selectedClient._id };
-      const endpoint = `${API_BASE_URL}/generate-proposal`;
+    if (selectedReport) {
+
+      const requestBody = {
+        reportId: selectedReport._id,
+        clientId: selectedReport.clientId._id, // Add a default value if needed
+        clientName: selectedReport.clientId.clientName || 'Unknown Client',
+        mailingAddress: selectedReport.clientId.mailingAddress,
+        propertyName: selectedReport.propertyInfo.propertyName,
+        propertyAddress: selectedReport.clientId.propertyAddress,
+
+        officeSpacePercentage: selectedReport.buildingDetails.officeSpacePercentage,
+        warehouseSpacePercentage: selectedReport.buildingDetails.warehouseSpacePercentage,
+        retailSpacePercentage: selectedReport.buildingDetails.retailSpacePercentage,
+        otherSpacePercentage: selectedReport.buildingDetails.otherSpacePercentage,
+        propertyRepresentativeName: selectedReport.clientId.propertyRepresentativeName,
+      };
   
-      // Log the data and endpoint before making the request
+      const endpoint = `${API_BASE_URL}/generate-report`;
+  
       console.log('POST request to:', endpoint);
       console.log('Request body:', JSON.stringify(requestBody, null, 2));
-
   
       fetch(endpoint, {
         method: 'POST',
@@ -72,34 +90,33 @@ const ReportGeneration = () => {
         body: JSON.stringify(requestBody),
       })
         .then((response) => {
-          // Log response status
-          console.log('Response status:', response.status);
-  
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-  
           return response.blob();
         })
         .then((blob) => {
-          // Log success before creating the download link
-          console.log('Blob received, creating download link...');
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `Proposal-${selectedClient.clientName}.docx`;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
+          if (blob.size > 0) {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Proposal_${selectedReport.clientId?.clientName}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          } else {
+            throw new Error('Blob is empty.');
+          }
         })
         .catch((error) => {
-          // Log any errors
           console.error('Error generating report:', error);
+          alert('Failed to generate the report. Please try again.');
         });
     } else {
-      alert('Please select a report first!');
+      alert('Please select a report!');
     }
   };
+  
   
 
   // Pagination logic: calculate the reports to display based on the current page
@@ -127,13 +144,13 @@ const ReportGeneration = () => {
           >
             Proposal
           </button>
-          <button
+          {/* <button
             type="button"
             className={`bubble-button ${reportType === 'summaryReport' ? 'selected' : ''}`}
             onClick={() => setReportType('summaryReport')}
           >
             Summary Report
-          </button>
+          </button> */}
           <button
             type="button"
             className={`bubble-button ${reportType === 'fullReport' ? 'selected' : ''}`}
@@ -173,8 +190,8 @@ const ReportGeneration = () => {
                     <tr>
                       <th>Client Name</th>
                       <th>Property Name</th>
-                      <th>Description</th>
-                      <th>Select User</th>
+                      <th>Report Description</th>
+                      <th>Select</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -184,10 +201,10 @@ const ReportGeneration = () => {
                         <td>{report.propertyInfo?.propertyName}</td>
                         <td>{report.description}</td>
                         <td>
-                          <button
-                            className={`select-circle ${selectedClient?._id === report._id ? 'selected' : ''}`}
-                            onClick={() => handleClientSelect(report)} // Use report._id here
-                          ></button>
+                        <button
+                          className={`select-circle ${selectedReport?._id === report._id ? 'selected' : ''}`}
+                          onClick={() => handleReportSelect(report)}
+                        ></button>
                         </td>
                       </tr>
                     ))}
