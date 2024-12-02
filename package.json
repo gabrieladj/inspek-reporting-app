@@ -19,6 +19,7 @@
   "homepage": "https://github.com/gabrieladj/inspek-reporting-app#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "bootstrap": "^5.3.3",
     "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
     "cors": "^2.8.5",
