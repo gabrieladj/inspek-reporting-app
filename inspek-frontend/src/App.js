@@ -8,7 +8,7 @@ import Dashboard from './components/Dashboard.js';
 import DatabaseAccess from './components/DatabaseAccess.js';
 import ReportGeneration from './components/ReportGeneration.js';
 import ClientProfile from './components/ClientProfile.js';
-import ProjectDetails from './components/ProjectDetails.js';
+// import ProjectDetails from './components/ProjectDetails.js';
 import ClientInfo from './components/ClientInfo.js';
 import PrivateRoute from './components/PrivateRoute';
 import Layout from './components/Layout';
