@@ -291,6 +291,7 @@ app.get('/api/reports', async (req, res) => {
 
 // Fetch a single report by ID
 app.get('/api/reports/:id', async (req, res) => {
+  console.log("Fetching report with ID:", req.params.id);
   try {
     const report = await Report.findById(req.params.id);
     if (!report) {
@@ -302,6 +303,7 @@ app.get('/api/reports/:id', async (req, res) => {
     res.status(500).json({ message: 'Error fetching report' });
   }
 });
+
 
 app.get('/api/reports/by-client/:clientId', async (req, res) => {
   try {

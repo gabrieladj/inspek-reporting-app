@@ -1,0 +1,64 @@
+div {
+    font-family: Bitter, serif;
+  }
+
+/* Navbar Title */
+.navbar-title {
+    color: white;
+    /* Add other navbar styles like background, font, etc. */
+  }
+  
+  /* Main Title */
+  .main-title {
+    color: black;
+    /* Add other styles specific to the main title */
+  }
+  
+  h1 {
+    color: #fff;
+  }
+  
+  h2, h3 {
+    color: #333;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table th, table td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  table th {
+    background-color: #f4f4f4;
+  }
+  
+
+  /* Grid Layout for report details */
+  .report-details-grid {
+    display: flex;
+    flex-direction: row; /* Side by side */
+    gap: 20px;
+    justify-content: space-between;
+  }
+  
+  /* Left side for client info and property info */
+  .left-selection {
+    background-color: #d37765;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    flex: 1; /* Ensures it takes up 50% of the space */
+  }
+  
+  /* Right side for the rest of the report details */
+  .right-column {
+    background-color: #f4f4f4;
+    flex: 2; /* Ensures it takes up the remaining space */
+  }
+  

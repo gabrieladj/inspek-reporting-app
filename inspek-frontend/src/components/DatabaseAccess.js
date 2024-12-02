@@ -91,40 +91,47 @@ const DatabaseAccess = () => {
         }
     };
 
-    const renderTableRows = () => {
-        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-        const endIndex = startIndex + ITEMS_PER_PAGE;
-        const itemsToShow = data.slice(startIndex, endIndex);
-
-        if (selectedCollection === 'reports') {
-            return itemsToShow.map((item) => (
-                <tr key={item._id}>
-                    <td>{item.clientId?.clientName || 'N/A'}</td>
-                    <td>{item.propertyInfo?.propertyName || 'N/A'}</td>
-                    <td>{item.title || 'N/A'}</td>
-                    <td>{item.description || 'N/A'}</td>
-                    <td className="action-buttons">
-                        <button onClick={() => alert(JSON.stringify(item, null, 2))}>View Details</button>
-                        <button onClick={() => openDeleteModal(item._id)}>Delete</button>
-                    </td>
-                </tr>
-            ));
-        } else if (selectedCollection === 'clients') {
-            return itemsToShow.map((client) => (
-                <tr key={client._id}>
-                    <td>{client.clientName || 'N/A'}</td>
-                    <td>{client.propertyRepresentativeName || 'N/A'}</td>
-                    <td>{client.propertyRepresentativeEmail || 'N/A'}</td>
-                    <td>{client.propertyRepresentativePhone || 'N/A'}</td>
-                    <td>{client.mailingAddress || 'N/A'}</td>
-                    <td className="action-buttons">
-                        <button onClick={() => handleClientClick(client._id)}>View Details</button>
-                        <button onClick={() => openDeleteModal(client._id)}>Delete</button>
-                    </td>
-                </tr>
-            ));
-        }
+    const handleReportClick = (reportId) => {
+        console.log("Navigating to report with ID:", reportId); // Debugging line
+        navigate(`/report/${reportId}`); // This should navigate to the correct page
     };
+    
+
+    // Update renderTableRows for reports
+const renderTableRows = () => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const itemsToShow = data.slice(startIndex, endIndex);
+
+    if (selectedCollection === 'reports') {
+        return itemsToShow.map((item) => (
+            <tr key={item._id}>
+                <td>{item.clientId?.clientName || 'N/A'}</td>
+                <td>{item.propertyInfo?.propertyName || 'N/A'}</td>
+                <td>{item.title || 'N/A'}</td>
+                <td>{item.description || 'N/A'}</td>
+                <td className="action-buttons">
+                    <button onClick={() => handleReportClick(item._id)}>View Details</button>
+                    <button onClick={() => openDeleteModal(item._id)}>Delete</button>
+                </td>
+            </tr>
+        ));
+    } else if (selectedCollection === 'clients') {
+        return itemsToShow.map((client) => (
+            <tr key={client._id}>
+                <td>{client.clientName || 'N/A'}</td>
+                <td>{client.propertyRepresentativeName || 'N/A'}</td>
+                <td>{client.propertyRepresentativeEmail || 'N/A'}</td>
+                <td>{client.propertyRepresentativePhone || 'N/A'}</td>
+                <td>{client.mailingAddress || 'N/A'}</td>
+                <td className="action-buttons">
+                    <button onClick={() => handleClientClick(client._id)}>View Details</button>
+                    <button onClick={() => openDeleteModal(client._id)}>Delete</button>
+                </td>
+            </tr>
+        ));
+    }
+};
 
     const renderPagination = () => {
         const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);

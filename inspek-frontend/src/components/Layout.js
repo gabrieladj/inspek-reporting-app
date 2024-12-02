@@ -10,12 +10,13 @@ const Layout = () => {
   };
 
   const getButtonClass = (path) => {
-    // Highlight "Access Database" if viewing a client profile
-    if (path === '/database-access' && location.pathname.startsWith('/client/')) {
-      return 'sidebar-button active';
+    // Highlight "Access Database" if on a client or report page
+    if (path === '/database-access' && (location.pathname.startsWith('/client/') || location.pathname.startsWith('/report/'))) {
+      return 'sidebar-button active';  // Add 'active' class if we're on a report or client page
     }
-    return location.pathname === path ? 'sidebar-button active' : 'sidebar-button';
+    return location.pathname === path ? 'sidebar-button active' : 'sidebar-button';  // Normal matching logic
   };
+  
   
 
   return (
@@ -34,10 +35,6 @@ const Layout = () => {
         <Link to="/database-access">
           <button className={getButtonClass('/database-access')} style={{ fontFamily: 'Bitter, serif' }}>Access Database</button>
         </Link>
-
-        {/* <Link to="/project-details">
-          <button className={getButtonClass('/project-details')} style={{ fontFamily: 'Bitter, serif' }}>View Project Details</button>
-        </Link> */}
 
         <Link to="/client-info">
           <button className={getButtonClass('/client-info')} style={{ fontFamily: 'Bitter, serif' }}>Add Client (manual)</button>

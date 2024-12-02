@@ -40,3 +40,7 @@ table th {
 .main-content {
   padding-top: 0 !important; /* Remove top padding specifically for this page */
 }
+
+.test-class {
+  color: red;
+}

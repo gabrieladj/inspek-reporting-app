@@ -12,6 +12,8 @@ import ClientProfile from './components/ClientProfile.js';
 import ClientInfo from './components/ClientInfo.js';
 import PrivateRoute from './components/PrivateRoute';
 import Layout from './components/Layout';
+import ReportDetails from './components/ReportDetails.js'; 
+// import ViewReportProfile from './components/ReportProfile.js';
 
 function App() {
   return (
@@ -36,6 +38,7 @@ function App() {
               <Route path="/database-access" element={<DatabaseAccess />} />
               {/* <Route path="/client-profile" element={<ClientProfile />} /> */}
               <Route path="/client/:clientId" element={<ClientProfile />} />
+              <Route path="/report/:reportId" element={<ReportDetails />} />
             </Route>
           </Routes>
         </Router>
