@@ -96,7 +96,7 @@ app.get('/api/dashboard-data', async (req, res) => {
 
 // Routes to handle data from Google Apps Script -> goes to Client and Reports Collections
 
-// POST route for client data
+// POST route for client 
 app.post('/api/client-data', async (req, res) => {
   try {
     const clientData = req.body;

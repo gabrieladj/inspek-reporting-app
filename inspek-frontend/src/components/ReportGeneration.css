@@ -1,6 +1,6 @@
 .report-generation-container {
   padding: 20px;
-  width: 50%;
+  width: 60%;
   margin: auto;
 }
 
@@ -84,28 +84,33 @@ input {
 }
 
 .clients-table {
-  width: 100%;
+  width: 80%; /* Increase width to 90% of the container */
+  max-width: 100%; /* Ensure the table doesn't overflow */
+  margin: 20px auto; /* Center the table */
   border-collapse: collapse;
-  margin: 10px 0;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
+  table-layout: auto; /* Allows columns to adjust width automatically */
 }
 
 .clients-table th,
 .clients-table td {
   border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
+  padding: 12px; /* Increased padding for better readability */
+  text-align: center; 
 }
 
 .clients-table th {
   background-color: #f4f4f4;
   font-weight: bold;
+  font-size: 14px; 
 }
 
 .clients-table td {
-  text-align: center;
+  text-align: center; /* Keep text aligned consistently */
+  font-size: 14px; /* Optional: Match font size with headers */
 }
+
 
 .select-circle {
   width: 20px;
