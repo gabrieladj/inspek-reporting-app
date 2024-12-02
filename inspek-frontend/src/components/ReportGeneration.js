@@ -18,7 +18,7 @@ const ReportGeneration = () => {
     deficiencies: [],
   });
   const [reports, setReports] = useState([]); // State for storing reports
-  const [selectedClient, setSelectedClient] = useState(null);
+  const [, setSelectedClient] = useState(null);
   const [selectedReport, setSelectedReport] = useState(null);
   const [clientAction, setClientAction] = useState('');
 
