@@ -8,7 +8,7 @@ const ITEMS_PER_PAGE = 15; // Updated items per page
 
 const DatabaseAccess = () => {
     const [data, setData] = useState([]);
-    const [selectedCollection, setSelectedCollection] = useState('reports');
+    const [selectedCollection, setSelectedCollection] = useState('clients');
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -17,11 +17,12 @@ const DatabaseAccess = () => {
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         setError(null);
-
+    
         try {
             const response = await axios.get(`${API_BASE_URL}/${selectedCollection}`);
             if (Array.isArray(response.data)) {
-                const sortedData = [...response.data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                // Reverse the array directly since there's no `createdAt`
+                const sortedData = [...response.data].reverse();
                 setData(sortedData);
             } else {
                 throw new Error(`Unexpected data format: ${JSON.stringify(response.data)}`);
@@ -33,6 +34,7 @@ const DatabaseAccess = () => {
             setIsLoading(false);
         }
     }, [selectedCollection]);
+    
 
     useEffect(() => {
         fetchData();
@@ -144,16 +146,17 @@ const DatabaseAccess = () => {
             <div className="collection-select">
                 <label htmlFor="collection-select">Select Collection:</label>
                 <select
-                    id="collection-select"
-                    value={selectedCollection}
-                    onChange={(e) => {
-                        setSelectedCollection(e.target.value);
-                        setCurrentPage(1);
-                    }}
-                >
-                    <option value="reports">Reports</option>
-                    <option value="clients">Clients</option>
-                </select>
+                id="collection-select"
+                value={selectedCollection}
+                onChange={(e) => {
+                    setSelectedCollection(e.target.value);
+                    setCurrentPage(1);
+                }}
+            >
+                <option value="clients">Clients</option>
+                <option value="reports">Reports</option>
+            </select>
+
             </div>
             {isLoading ? (
                 <p>Loading data...</p>
