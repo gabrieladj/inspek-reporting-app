@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ConfirmDeleteModal from './ConfirmDeleteModal';
-import './DatabaseAccess.css';
+import ConfirmDeleteModal from './ConfirmDeleteModal'; // Import the modal component
+import './DatabaseAccess.css'; // Importing the CSS file
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
-const ITEMS_PER_PAGE = 15;
+const ITEMS_PER_PAGE = 15; // Updated items per page
 
 const DatabaseAccess = () => {
     const [data, setData] = useState([]);
@@ -13,8 +13,8 @@ const DatabaseAccess = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [modalOpen, setModalOpen] = useState(false); // State for modal
-    const [clientToDelete, setClientToDelete] = useState(null); // State for client ID to delete
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
     const navigate = useNavigate();
 
     const fetchData = useCallback(async () => {
@@ -24,7 +24,7 @@ const DatabaseAccess = () => {
         try {
             const response = await axios.get(`${API_BASE_URL}/${selectedCollection}`);
             if (Array.isArray(response.data)) {
-                const sortedData = [...response.data].reverse();
+                const sortedData = [...response.data].reverse(); // Reverse the array directly
                 setData(sortedData);
             } else {
                 throw new Error(`Unexpected data format: ${JSON.stringify(response.data)}`);
@@ -41,23 +41,54 @@ const DatabaseAccess = () => {
         fetchData();
     }, [fetchData]);
 
-    const handleDeleteClient = async () => {
+    const openDeleteModal = (id) => {
+        setItemToDelete(id);
+        setIsModalOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+        setIsModalOpen(false);
+        setItemToDelete(null);
+    };
+
+    const handleDelete = async () => {
         try {
-            if (clientToDelete) {
-                await axios.delete(`${API_BASE_URL}/clients/${clientToDelete}`);
-                setData(data.filter((item) => item._id !== clientToDelete));
-                setClientToDelete(null);
-                setModalOpen(false); // Close the modal
-            }
+            await axios.delete(`${API_BASE_URL}/${selectedCollection}/${itemToDelete}`);
+            setData(data.filter((item) => item._id !== itemToDelete));
+            closeDeleteModal();
         } catch (err) {
             console.error('Delete error:', err.message);
-            setError('Failed to delete client.');
+            setError('Failed to delete item.');
         }
     };
 
-    const handleDeleteClick = (clientId) => {
-        setClientToDelete(clientId);
-        setModalOpen(true); // Open the modal
+    const handleClientClick = (clientId) => {
+        navigate(`/client/${clientId}`);
+    };
+
+    const renderTableColumns = () => {
+        if (selectedCollection === 'reports') {
+            return (
+                <>
+                    <th>Client Name</th>
+                    <th>Property Name</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </>
+            );
+        } else if (selectedCollection === 'clients') {
+            return (
+                <>
+                    <th>Client Name</th>
+                    <th>Property Representative</th>
+                    <th>Property Rep. Email</th>
+                    <th>Property Rep. Phone</th>
+                    <th>Mailing Address</th>
+                    <th>Actions</th>
+                </>
+            );
+        }
     };
 
     const renderTableRows = () => {
@@ -65,7 +96,20 @@ const DatabaseAccess = () => {
         const endIndex = startIndex + ITEMS_PER_PAGE;
         const itemsToShow = data.slice(startIndex, endIndex);
 
-        if (selectedCollection === 'clients') {
+        if (selectedCollection === 'reports') {
+            return itemsToShow.map((item) => (
+                <tr key={item._id}>
+                    <td>{item.clientId?.clientName || 'N/A'}</td>
+                    <td>{item.propertyInfo?.propertyName || 'N/A'}</td>
+                    <td>{item.title || 'N/A'}</td>
+                    <td>{item.description || 'N/A'}</td>
+                    <td className="action-buttons">
+                        <button onClick={() => alert(JSON.stringify(item, null, 2))}>View Details</button>
+                        <button onClick={() => openDeleteModal(item._id)}>Delete</button>
+                    </td>
+                </tr>
+            ));
+        } else if (selectedCollection === 'clients') {
             return itemsToShow.map((client) => (
                 <tr key={client._id}>
                     <td>{client.clientName || 'N/A'}</td>
@@ -74,12 +118,36 @@ const DatabaseAccess = () => {
                     <td>{client.propertyRepresentativePhone || 'N/A'}</td>
                     <td>{client.mailingAddress || 'N/A'}</td>
                     <td className="action-buttons">
-                        <button onClick={() => navigate(`/client/${client._id}`)}>View Details</button>
-                        <button onClick={() => handleDeleteClick(client._id)}>Delete</button>
+                        <button onClick={() => handleClientClick(client._id)}>View Details</button>
+                        <button onClick={() => openDeleteModal(client._id)}>Delete</button>
                     </td>
                 </tr>
             ));
         }
+    };
+
+    const renderPagination = () => {
+        const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+
+        if (totalPages <= 1) return null;
+
+        return (
+            <div className="pagination">
+                <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                    Previous
+                </button>
+                <span>Page {currentPage} of {totalPages}</span>
+                <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                    Next
+                </button>
+            </div>
+        );
     };
 
     return (
@@ -106,39 +174,18 @@ const DatabaseAccess = () => {
                 <>
                     <table>
                         <thead>
-                            <tr>
-                                {/* Render appropriate columns */}
-                                {selectedCollection === 'clients' ? (
-                                    <>
-                                        <th>Client Name</th>
-                                        <th>Property Representative</th>
-                                        <th>Property Rep. Email</th>
-                                        <th>Property Rep. Phone</th>
-                                        <th>Mailing Address</th>
-                                        <th>Actions</th>
-                                    </>
-                                ) : (
-                                    <>
-                                        <th>Client Name</th>
-                                        <th>Property Name</th>
-                                        <th>Title</th>
-                                        <th>Description</th>
-                                        <th>Actions</th>
-                                    </>
-                                )}
-                            </tr>
+                            <tr>{renderTableColumns()}</tr>
                         </thead>
                         <tbody>{renderTableRows()}</tbody>
                     </table>
-                    {/* Render pagination if needed */}
-                    {/* Modal */}
-                    <ConfirmDeleteModal
-                        isOpen={modalOpen}
-                        onClose={() => setModalOpen(false)}
-                        onDelete={handleDeleteClient}
-                    />
+                    {renderPagination()}
                 </>
             )}
+            <ConfirmDeleteModal
+                isOpen={isModalOpen}
+                onClose={closeDeleteModal}
+                onDelete={handleDelete}
+            />
         </div>
     );
 };
