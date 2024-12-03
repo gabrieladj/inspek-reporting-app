@@ -9,7 +9,8 @@ const DeleteReportModal = ({ isOpen, onClose, onDelete, reportId }) => {
       <div className="modal-content">
       <h2 className="modal-title">Delete Report</h2>
         <p className="modal-description">
-          You are about to delete this report. This action cannot be undone.</p>
+          You are about to delete this report.<br />
+          This action cannot be undone.</p>
         <div className="modal-buttons">
           <button className="delete-button" onClick={() => onDelete(reportId)}>
             Delete
