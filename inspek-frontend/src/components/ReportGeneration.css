@@ -83,6 +83,13 @@ input {
   margin-top: 10px;
 }
 
+
+.clients-table tbody tr:hover {
+  background-color: #f2f2f2; /* Light grey color */
+  cursor: pointer; /* Optional: Change the cursor to indicate interactivity */
+}
+
+
 .clients-table {
   width: 80%; /* Increase width to 90% of the container */
   max-width: 100%; /* Ensure the table doesn't overflow */
