@@ -196,15 +196,19 @@ const ReportGeneration = () => {
                   </thead>
                   <tbody>
                     {currentReports.map((report) => (
-                      <tr key={`${report._id}-${report.clientId?._id}`}>
+                      <tr
+                        key={`${report._id}-${report.clientId?._id}`}
+                        onClick={() => handleReportSelect(report)} // Add this line
+                        className={selectedReport?._id === report._id ? 'row-selected' : ''} // Optional: highlight selected row
+                        style={{ cursor: 'pointer' }} // Optional: make the cursor indicate clickability
+                      >
                         <td>{report.clientId?.clientName}</td>
                         <td>{report.propertyInfo?.propertyName}</td>
                         <td>{report.description}</td>
                         <td>
-                        <button
-                          className={`select-circle ${selectedReport?._id === report._id ? 'selected' : ''}`}
-                          onClick={() => handleReportSelect(report)}
-                        ></button>
+                          <button
+                            className={`select-circle ${selectedReport?._id === report._id ? 'selected' : ''}`}
+                          ></button>
                         </td>
                       </tr>
                     ))}
