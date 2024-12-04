@@ -16,6 +16,7 @@ const User = require('./models/User');
 const Report = require('./models/Report');
 const Client = require('./models/Client');
 const { spawn } = require('child_process');
+const fs = require('fs');
 
 const app = express();
 app.use(express.json());
@@ -475,18 +476,15 @@ app.post('/api/generate-report', async (req, res) => {
       retailSpacePercentage,
       otherSpacePercentage,
       propertyRepresentativeName
-    } = req.body;  // Extract all required fields from the request body
-
+    } = req.body;
 
     let clientId = req.body.clientId;
     if (mongoose.Types.ObjectId.isValid(clientId)) {
-      clientId = new mongoose.Types.ObjectId(clientId);  // Convert to ObjectId
+      clientId = new mongoose.Types.ObjectId(clientId);
     }
 
     // Fetch the report based on the reportId
     const report = await Report.findById(reportId).populate('clientId', 'clientName mailingAddress propertyAddress propertyRepresentativeName');
-    // console.log("\nPopulated Report:", report);
-    
     if (!report) {
       return res.status(404).json({ message: 'Report not found' });
     }
@@ -496,40 +494,33 @@ app.post('/api/generate-report', async (req, res) => {
       return res.status(400).json({ message: 'Client information is missing' });
     }
 
-    // Fetch client details from the report
-    const reportClientName = report.clientId.clientName;
-    const reportMailingAddress = report.clientId.mailingAddress;
-    const reportPropertyAddress = report.clientId.propertyAddress;
-    const reportPropertyRepresentativeName = report.clientId.propertyRepresentativeName;
-
-    // File path for the generated proposal
     const filePath = path.join(__dirname, 'uploads', `Proposal_${clientName}_${propertyName}.docx`);
-
-
     console.log('Calling Python script with:', {
       reportId, clientId, clientName, mailingAddress, propertyName, propertyAddress, propertyRepresentativeName,
       officeSpacePercentage, warehouseSpacePercentage, retailSpacePercentage, otherSpacePercentage
     });
 
-    // Call Python script using spawn, passing all necessary fields
     const pythonProcess = spawn('python', [
-      path.join(__dirname, '/report_scripts/generate_proposal.py'), // Path to Python script
-      clientId.toString(), 
-      reportId.toString(), 
-      clientName, 
+      path.join(__dirname, '/report_scripts/generate_proposal.py'),
+      clientId.toString(),
+      reportId.toString(),
+      clientName,
       mailingAddress,
-      propertyName, 
-      propertyAddress, 
-      officeSpacePercentage, 
-      warehouseSpacePercentage, 
-      retailSpacePercentage, 
-      otherSpacePercentage, 
-      propertyRepresentativeName 
+      propertyName,
+      propertyAddress,
+      officeSpacePercentage,
+      warehouseSpacePercentage,
+      retailSpacePercentage,
+      otherSpacePercentage,
+      propertyRepresentativeName
     ]);
 
-    // Capture Python script stdout and stderr
     pythonProcess.stdout.on('data', (data) => {
-      console.log(`Python stdout: ${data}`);
+      const generatedFilePath = data.toString().trim();
+      console.log(`Generated file saved at: ${generatedFilePath}`);
+
+      // Send the file path as the response to the frontend
+      res.json({ message: 'Report generated successfully', filePath: generatedFilePath });
     });
 
     pythonProcess.stderr.on('data', (data) => {
@@ -537,19 +528,41 @@ app.post('/api/generate-report', async (req, res) => {
     });
 
     pythonProcess.on('close', (code) => {
-      if (code === 0) {
-        console.log(`Python script executed successfully, file saved: ${filePath}`);
-        res.json({ message: 'Report generated successfully', filePath });
-      } else {
+      if (code !== 0) {
         console.error(`Python script exited with code ${code}`);
-        res.status(500).json({ message: 'Error generating report' });
+        if (!res.headersSent) {
+          res.status(500).json({ message: 'Error generating report' });
+        }
       }
     });
+
   } catch (error) {
     console.error('Error generating report:', error);
     res.status(500).json({ message: 'Error generating report' });
   }
 });
+
+//serve the downloaded proposal
+app.get('/api/download-report/:filename', (req, res) => {
+  const { filename } = req.params;
+  // Update the filePath to reflect the correct directory where the file is saved
+  const filePath = path.join(__dirname, process.env.UPLOAD_FOLDER, filename);
+  console.log('Attempting to serve file from:', filePath);
+  
+  // Check if file exists
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    res.download(filePath, filename, {
+      headers: {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      }
+    });
+  });
+});
+
 
 // Route to serve index.html for '/login'
 app.get('/login', (req, res) => {

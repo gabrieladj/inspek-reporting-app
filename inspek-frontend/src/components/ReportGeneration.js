@@ -60,63 +60,77 @@ const ReportGeneration = () => {
   };  
   
 
-  // Handle proposal generation based on selected report
-  const handleGenerateReport = () => {
-    if (selectedReport) {
+// Handle proposal generation based on selected report
+const handleGenerateReport = () => {
+  if (selectedReport) {
+    const requestBody = {
+      reportId: selectedReport._id,
+      clientId: selectedReport.clientId._id, 
+      clientName: selectedReport.clientId.clientName || 'Unknown Client',
+      mailingAddress: selectedReport.clientId.mailingAddress,
+      propertyName: selectedReport.propertyInfo.propertyName,
+      propertyAddress: selectedReport.clientId.propertyAddress,
 
-      const requestBody = {
-        reportId: selectedReport._id,
-        clientId: selectedReport.clientId._id, 
-        clientName: selectedReport.clientId.clientName || 'Unknown Client',
-        mailingAddress: selectedReport.clientId.mailingAddress,
-        propertyName: selectedReport.propertyInfo.propertyName,
-        propertyAddress: selectedReport.clientId.propertyAddress,
+      officeSpacePercentage: selectedReport.buildingDetails.officeSpacePercentage,
+      warehouseSpacePercentage: selectedReport.buildingDetails.warehouseSpacePercentage,
+      retailSpacePercentage: selectedReport.buildingDetails.retailSpacePercentage,
+      otherSpacePercentage: selectedReport.buildingDetails.otherSpacePercentage,
+      propertyRepresentativeName: selectedReport.clientId.propertyRepresentativeName,
+    };
 
-        officeSpacePercentage: selectedReport.buildingDetails.officeSpacePercentage,
-        warehouseSpacePercentage: selectedReport.buildingDetails.warehouseSpacePercentage,
-        retailSpacePercentage: selectedReport.buildingDetails.retailSpacePercentage,
-        otherSpacePercentage: selectedReport.buildingDetails.otherSpacePercentage,
-        propertyRepresentativeName: selectedReport.clientId.propertyRepresentativeName,
-      };
-  
-      const endpoint = `${API_BASE_URL}/generate-report`;
-  
-      console.log('POST request to:', endpoint);
-      console.log('Request body:', JSON.stringify(requestBody, null, 2));
-  
-      fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.blob();
-        })
-        .then((blob) => {
-          if (blob.size > 0) {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Proposal_${selectedReport.clientId?.clientName}.docx`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-          } else {
-            throw new Error('Blob is empty.');
-          }
-        })
-        .catch((error) => {
-          console.error('Error generating report:', error);
-          alert('Failed to generate the report. Please try again.');
-        });
-    } else {
-      alert('Please select a report!');
-    }
-  };
-  
+    const endpoint = `${API_BASE_URL}/generate-report`;
+
+    console.log('POST request to:', endpoint);
+    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
+    fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody),
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();  // Parse JSON to get the file path
+    })
+    .then((data) => {
+      if (data && data.filePath) {
+        const filename = data.filePath.split('\\').pop(); // Extract filename from the filePath
+
+        // Trigger the file download by fetching the file from the new GET route
+        return fetch(`${API_BASE_URL}/download-report/${filename}`)
+          .then((downloadResponse) => {
+            if (!downloadResponse.ok) {
+              throw new Error(`Error downloading file: ${downloadResponse.status}`);
+            }
+            return downloadResponse.blob();  // Get the file as a Blob
+          })
+          .then((blob) => {
+            if (blob.size > 0) {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = filename;  // Use the extracted filename for download
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            } else {
+              throw new Error('Blob is empty.');
+            }
+          });
+      } else {
+        throw new Error('File path not received.');
+      }
+    })
+    .catch((error) => {
+      console.error('Error generating or downloading the report:', error);
+      alert('Failed to generate the report. Please try again.');
+    });
+  } else {
+    alert('Please select a report!');
+  }
+};
   
 
   // Pagination logic: calculate the reports to display based on the current page
