@@ -55,7 +55,7 @@ const ReportGeneration = () => {
     setSelectedClient(newSelection?.clientId || null); // Automatically associate the client
 
     console.log('Selected Report:', newSelection); // Log the selected report here
-    console.log("Selected Report Client Data:", newSelection.clientId);
+    console.log("Selected Report Client Data:", newSelection.clientId); //should see ALL expected fields here
 
   };  
   
@@ -243,11 +243,12 @@ const ReportGeneration = () => {
                       if (googleFormUrl) {
                         window.open(googleFormUrl, '_blank');
                       } else {
+                        console.log(process.env.REACT_APP_GOOGLE_FORM_URL);
                         console.error('Google Form URL is not defined!');
                       }
                     }}
                   >
-                    View Forms
+                    Google Forms
                   </button>
                   <button
                     type="button"

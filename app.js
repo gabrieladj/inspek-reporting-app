@@ -204,6 +204,7 @@ app.post('/api/create-report-outline', async (req, res) => {
 
     // Step 3: Populate clientId
     const populatedReport = await savedReport.populate({ path: 'clientId', select: 'name' });
+    console.log("Populated Report:", populatedReport);
 
     // Step 4: Construct the report outline
     const sections = [
@@ -278,7 +279,7 @@ app.post('/api/reports', async (req, res) => {
 app.get('/api/reports', async (req, res) => {
   try {
     const reports = await Report.find()
-      .populate({ path: 'clientId', select: 'clientName' }); // Populate clientId with clientName
+      .populate({ path: 'clientId', select: 'clientName mailingAddress propertyAddress propertyRepresentativeName' }); // Populate clientId with clientName
 
     // Now, each report will include the clientName from the Client schema
     res.json(reports);
@@ -462,7 +463,7 @@ app.delete('/api/clients/:id', async (req, res) => {
 //route for python script to generate proposal
 app.post('/api/generate-report', async (req, res) => {
   try {
-    console.log('Received Request Body:', req.body);  // Add this log
+    console.log('Received Request Body:', req.body);
     const {
       reportId,
       clientName,
@@ -476,8 +477,15 @@ app.post('/api/generate-report', async (req, res) => {
       propertyRepresentativeName
     } = req.body;  // Extract all required fields from the request body
 
+
+    let clientId = req.body.clientId;
+    if (mongoose.Types.ObjectId.isValid(clientId)) {
+      clientId = new mongoose.Types.ObjectId(clientId);  // Convert to ObjectId
+    }
+
     // Fetch the report based on the reportId
     const report = await Report.findById(reportId).populate('clientId', 'clientName mailingAddress propertyAddress propertyRepresentativeName');
+    //console.log("\nPopulated Report:", report);
     if (!report) {
       return res.status(404).json({ message: 'Report not found' });
     }
@@ -487,26 +495,24 @@ app.post('/api/generate-report', async (req, res) => {
       return res.status(400).json({ message: 'Client information is missing' });
     }
 
+    console.log('Client ID:', clientId);
+    console.log('Report ID:', reportId);  
+
     // Fetch client details from the report
-    const clientId = report.clientId._id; // Client ID for the Python script
+    //const clientId = report.clientId._id; // Client ID for the Python script
     const reportClientName = report.clientId.clientName;
     const reportMailingAddress = report.clientId.mailingAddress;
     const reportPropertyAddress = report.clientId.propertyAddress;
     const reportPropertyRepresentativeName = report.clientId.propertyRepresentativeName;
 
-    // Log client details to debug
-    console.log('Report Client Details:', {
-      clientId,
-      clientName: reportClientName,
-      mailingAddress: reportMailingAddress,
-      propertyAddress: reportPropertyAddress,
-      propertyRepresentativeName: reportPropertyRepresentativeName
-    });
-
-    //console.log("Populated Report Client:", report.clientId);
-
     // File path for the generated proposal
     const filePath = path.join(__dirname, 'uploads', `Proposal_${clientName}_${propertyName}.docx`);
+
+
+    console.log('Calling Python script with:', {
+      reportId, clientId, clientName, mailingAddress, propertyName, propertyAddress, propertyRepresentativeName,
+      officeSpacePercentage, warehouseSpacePercentage, retailSpacePercentage, otherSpacePercentage
+    });
 
     // Call Python script using spawn, passing all necessary fields
     const pythonProcess = spawn('python', [
