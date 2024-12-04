@@ -9,6 +9,7 @@ import json
 import pymongo
 from bson import ObjectId  # Import ObjectId from bson
 import argparse
+import io
 
 # Load environment variables
 load_dotenv()
@@ -27,8 +28,8 @@ print(f"TEMPLATE_PATH: {TEMPLATE_PATH}")
 # Connect to MongoDB (adjust connection details as needed)
 client = pymongo.MongoClient(os.getenv("MONGODB_URI"))
 db = client.get_database()  # Use the correct database name
-client_collection = db["Client"]  # Use the correct collection name
-report_collection = db["Report"]  # Use the correct collection name
+client_collection = db["Client"]  
+report_collection = db["Report"]  
 print(f"Connected to DB...")
 
 # Parse arguments
@@ -78,26 +79,28 @@ client_id = ObjectId(args.client_id)
 report_id = ObjectId(args.report_id)
 
 # Fetch data from MongoDB
+print(f"Querying client collection with client_id: {client_id}")
 client_data = client_collection.find_one({"_id": client_id})
+
+print(f"Querying report collection with report_id: {report_id}")
 report_data = report_collection.find_one({"_id": report_id})
 
+# handle missing data gracefully
+client_data = db.clients.find_one({"_id": ObjectId(client_id)})
+if not client_data:
+    print(f"No client data found for clientId: {client_id}")
 
-print(f"client_id type: {type(client_id)}")  # Debugging line
-print(f"report_id type: {type(report_id)}")  # Debugging line
+report_data = db.reports.find_one({"_id": ObjectId(report_id)})
+if not report_data:
+    print(f"No report data found for reportId: {report_id}")
+
+if not client_data or not report_data:
+    raise ValueError("Missing data for given clientId or reportId.")
 
 
 print(f"Client ID: {args.client_id}")
 print(f"Report ID: {args.report_id}")
 
-if client_data:
-    print(f"Client Data: {client_data}")
-else:
-    print(f"Client data not found for client_id: {client_id}")
-
-if report_data:
-    print(f"Report Data: {report_data}")
-else:
-    print(f"Report data not found for report_id: {report_id}")
 
     
 if not client_data or not report_data:

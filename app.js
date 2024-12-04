@@ -485,7 +485,8 @@ app.post('/api/generate-report', async (req, res) => {
 
     // Fetch the report based on the reportId
     const report = await Report.findById(reportId).populate('clientId', 'clientName mailingAddress propertyAddress propertyRepresentativeName');
-    //console.log("\nPopulated Report:", report);
+    // console.log("\nPopulated Report:", report);
+    
     if (!report) {
       return res.status(404).json({ message: 'Report not found' });
     }
@@ -495,11 +496,7 @@ app.post('/api/generate-report', async (req, res) => {
       return res.status(400).json({ message: 'Client information is missing' });
     }
 
-    console.log('Client ID:', clientId);
-    console.log('Report ID:', reportId);  
-
     // Fetch client details from the report
-    //const clientId = report.clientId._id; // Client ID for the Python script
     const reportClientName = report.clientId.clientName;
     const reportMailingAddress = report.clientId.mailingAddress;
     const reportPropertyAddress = report.clientId.propertyAddress;

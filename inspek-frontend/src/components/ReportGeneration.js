@@ -66,7 +66,7 @@ const ReportGeneration = () => {
 
       const requestBody = {
         reportId: selectedReport._id,
-        clientId: selectedReport.clientId._id, // Add a default value if needed
+        clientId: selectedReport.clientId._id, 
         clientName: selectedReport.clientId.clientName || 'Unknown Client',
         mailingAddress: selectedReport.clientId.mailingAddress,
         propertyName: selectedReport.propertyInfo.propertyName,
