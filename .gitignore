@@ -131,3 +131,6 @@ dist
 
 # templates for business
 /word_templates/
+
+#client uploads
+/uploads/

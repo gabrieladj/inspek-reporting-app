@@ -21,6 +21,9 @@ const fs = require('fs');
 const app = express();
 app.use(express.json());
 
+// Determine the Python path based on the environment
+const pythonPath = process.env.PYTHON_PATH || (process.env.NODE_ENV === 'production' ? '/usr/bin/python3' : 'python');
+
 // Get the CORS origin(s) from the environment variable
 const allowedOrigins = process.env.CORS_ORIGIN.split(',');
 
@@ -497,13 +500,13 @@ app.post('/api/generate-report', async (req, res) => {
       return res.status(400).json({ message: 'Client information is missing' });
     }
 
-    const filePath = path.join(__dirname, 'uploads', `Proposal_${clientName}_${propertyName}.docx`);
+    const filePath = path.join(__dirname, process.env.UPLOAD_FOLDER || 'uploads', `Proposal_${clientName}_${propertyName}.docx`);
     console.log('Calling Python script with:', {
       reportId, clientId, clientName, mailingAddress, propertyName, propertyAddress, propertyRepresentativeName,
       officeSpacePercentage, warehouseSpacePercentage, retailSpacePercentage, otherSpacePercentage
     });
 
-    const pythonProcess = spawn('python', [
+    const pythonProcess = spawn(pythonPath, [
       path.join(__dirname, '/report_scripts/generate_proposal.py'),
       clientId.toString(),
       reportId.toString(),
@@ -551,13 +554,13 @@ app.get('/api/download-report/:filename', (req, res) => {
 
   const uploadFolder = process.env.UPLOAD_FOLDER || 'uploads';  // Fallback to 'uploads'
   const sanitizedFilename = path.basename(filename); // Ensure only the base name is used
-  const filePath = path.join(__dirname, 'uploads', sanitizedFilename);
+  const filePath = path.join(__dirname, uploadFolder, sanitizedFilename);
   console.log('Attempting to serve file from:', filePath);
   // Update the filePath to reflect the correct directory where the file is saved
   // const filePath = path.normalize(path.join(__dirname, process.env.UPLOAD_FOLDER, filename));
   
-  console.log('Upload folder (express app):', uploadFolder );
-  console.log('Attempting to serve file from:', filePath);
+  // console.log('Upload folder (express app):', uploadFolder );
+  // console.log('Attempting to serve file from:', filePath);
   
   // Check if file exists
   fs.access(filePath, fs.constants.F_OK, (err) => {
