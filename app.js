@@ -481,7 +481,12 @@ app.post('/api/generate-report', async (req, res) => {
       warehouseSpacePercentage,
       retailSpacePercentage,
       otherSpacePercentage,
-      propertyRepresentativeName
+      propertyRepresentativeName,
+      manufacturingSpacePercentage,
+      roleOrRelationship,
+      propertyType,
+      totalBuildingSqFt,
+      typeOfInspection
     } = req.body;
 
     let clientId = req.body.clientId;
@@ -490,7 +495,11 @@ app.post('/api/generate-report', async (req, res) => {
     }
 
     // Fetch the report based on the reportId
-    const report = await Report.findById(reportId).populate('clientId', 'clientName mailingAddress propertyAddress propertyRepresentativeName');
+    const report = await Report.findById(reportId).populate('clientId', 'clientName mailingAddress propertyAddress propertyRepresentativeName roleOrRelationship');
+    console.log('Populated clientId:', report.clientId);
+    console.log('Populated report:', report);
+
+
     if (!report) {
       return res.status(404).json({ message: 'Report not found' });
     }
@@ -501,9 +510,11 @@ app.post('/api/generate-report', async (req, res) => {
     }
 
     const filePath = path.join(__dirname, process.env.UPLOAD_FOLDER || 'uploads', `Proposal_${clientName}_${propertyName}.docx`);
-    console.log('Calling Python script with:', {
-      reportId, clientId, clientName, mailingAddress, propertyName, propertyAddress, propertyRepresentativeName,
-      officeSpacePercentage, warehouseSpacePercentage, retailSpacePercentage, otherSpacePercentage
+    
+    console.log('Sending to Python script:', {
+      clientId, clientName, mailingAddress, propertyName, propertyAddress, officeSpacePercentage,
+      warehouseSpacePercentage, retailSpacePercentage, otherSpacePercentage, propertyRepresentativeName,
+      manufacturingSpacePercentage, roleOrRelationship, propertyType, totalBuildingSqFt, typeOfInspection
     });
 
     const pythonProcess = spawn(pythonPath, [
@@ -518,7 +529,12 @@ app.post('/api/generate-report', async (req, res) => {
       warehouseSpacePercentage,
       retailSpacePercentage,
       otherSpacePercentage,
-      propertyRepresentativeName
+      propertyRepresentativeName,
+      manufacturingSpacePercentage,
+      roleOrRelationship,
+      propertyType,
+      totalBuildingSqFt,
+      typeOfInspection
     ]);
 
     pythonProcess.stdout.on('data', (data) => {
@@ -556,11 +572,6 @@ app.get('/api/download-report/:filename', (req, res) => {
   const sanitizedFilename = path.basename(filename); // Ensure only the base name is used
   const filePath = path.join(__dirname, uploadFolder, sanitizedFilename);
   console.log('Attempting to serve file from:', filePath);
-  // Update the filePath to reflect the correct directory where the file is saved
-  // const filePath = path.normalize(path.join(__dirname, process.env.UPLOAD_FOLDER, filename));
-  
-  // console.log('Upload folder (express app):', uploadFolder );
-  // console.log('Attempting to serve file from:', filePath);
   
   // Check if file exists
   fs.access(filePath, fs.constants.F_OK, (err) => {

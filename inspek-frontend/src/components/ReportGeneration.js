@@ -69,13 +69,20 @@ const handleGenerateReport = () => {
       clientName: selectedReport.clientId.clientName || 'Unknown Client',
       mailingAddress: selectedReport.clientId.mailingAddress,
       propertyName: selectedReport.propertyInfo?.propertyName,
-      propertyAddress: selectedReport.clientId.propertyAddress,
+      propertyAddress: selectedReport.propertyInfo?.propertyAddress,
 
       officeSpacePercentage: selectedReport.buildingDetails.officeSpacePercentage,
       warehouseSpacePercentage: selectedReport.buildingDetails.warehouseSpacePercentage,
       retailSpacePercentage: selectedReport.buildingDetails.retailSpacePercentage,
       otherSpacePercentage: selectedReport.buildingDetails.otherSpacePercentage,
       propertyRepresentativeName: selectedReport.clientId.propertyRepresentativeName,
+
+      manufacturingSpacePercentage: selectedReport.buildingDetails.manufacturingSpacePercentage,
+      roleOrRelationship: selectedReport.clientId.roleOrRelationship,
+      propertyType: selectedReport.propertyInfo?.propertyType,
+      totalBuildingSqFt: selectedReport.propertyInfo?.totalBuildingSqFt,
+
+      typeOfInspection: selectedReport.inspectionScope.typeOfInspection,
     };
 
     const endpoint = `${API_BASE_URL}/generate-report`;

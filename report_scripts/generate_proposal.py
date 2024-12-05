@@ -7,6 +7,7 @@ import pymongo
 from bson import ObjectId  # Import ObjectId from bson
 import argparse
 from io import BytesIO
+# from docxtpl import DocxTemplate
 
 # Load environment variables
 load_dotenv()
@@ -42,7 +43,14 @@ parser.add_argument("warehouseSpacePercentage", help="Percentage of warehouse sp
 parser.add_argument("retailSpacePercentage", help="Percentage of retail space")
 parser.add_argument("otherSpacePercentage", help="Percentage of other space")
 parser.add_argument("propertyRepresentativeName", help="Property representative name")
+parser.add_argument("manufacturingSpacePercentage", help="Percentage of manufacturing space")
+parser.add_argument("roleOrRelationship", help="Role or relationship of the client")
+parser.add_argument("propertyType", help="Type of property")
+parser.add_argument("totalBuildingSqFt", help="Total building sq. ft.")
+parser.add_argument("typeOfInspection", help="Inspection type")
 args = parser.parse_args()
+
+print("Arguments passed to the script:", sys.argv)  # Check what data is received
 
 client_id = args.client_id
 report_id = args.report_id
@@ -57,7 +65,8 @@ if not ObjectId.is_valid(report_id):
 
 def generate_proposal(client_name, mailing_address, property_name,
                       property_address, office_space_percentage, warehouse_space_percentage,
-                      retail_space_percentage, other_space_percentage, property_representative_name):
+                      retail_space_percentage, manufacturing_space_percentage, other_space_percentage, 
+                      property_representative_name, role_or_relationship, type_of_property, total_building_sq_ft, inspection_type):
 
     # Convert clientId and reportId to ObjectId
     client_id = ObjectId(args.client_id)
@@ -69,6 +78,7 @@ def generate_proposal(client_name, mailing_address, property_name,
 
     print(f"Querying report collection with report_id: {report_id}")
     report_data = report_collection.find_one({"_id": report_id})
+    print("...")
 
     if not client_data:
         print(f"No client data found for clientId: {client_id}")
@@ -77,8 +87,32 @@ def generate_proposal(client_name, mailing_address, property_name,
         print(f"No report data found for reportId: {report_id}")
         sys.exit(1)
 
-    print(f"Client ID: {args.client_id}")
-    print(f"Report ID: {args.report_id}")
+
+    # Print the fetched client and report data to check if fields are correct
+    # debugging lines
+    print("...")
+    print("FETCHED DATA:")
+    print(f"Client Data: {client_data}")
+    print(f"Report Data: {report_data}")
+    print("END OF FETCHED DATA")
+    print("...")
+
+    # for debugging client_data and report_data
+    print(f"Client Name: {client_data.get('clientName')}")
+    print(f"Mailing Address: {client_data.get('mailingAddress')}")
+    print(f"Property Name: {report_data.get('propertyName')}")
+    print(f"Property Address: {report_data.get('propertyAddress')}")
+    print(f"Office Space Percentage: {report_data.get('officeSpacePercentage')}")
+    print(f"Warehouse Space Percentage: {report_data.get('warehouseSpacePercentage')}")
+    print(f"Retail Space Percentage: {report_data.get('retailSpacePercentage')}")
+    print(f"Other Space Percentage: {report_data.get('otherSpacePercentage')}")
+    print(f"Property Representative Name: {report_data.get('propertyRepresentativeName')}")
+
+    print(f"Manufacturing Space Percentage: {report_data.get('manufacturingSpacePercentage')}")
+    print(f"Role or Relationship: {client_data.get('roleOrRelationship')}")
+    print(f"Type of Property: {client_data.get('propertyType')}")
+    print(f"Total Building Sq. Ft.: {report_data.get('totalBuildingSqFt')}")
+    print(f"Type of Inspection: {report_data.get('typeOfInspection')}")
 
     # Load template
     if not os.path.exists(TEMPLATE_FILE):
@@ -88,26 +122,33 @@ def generate_proposal(client_name, mailing_address, property_name,
     # Open the template document
     doc = Document(TEMPLATE_FILE)
 
-    # Placeholder replacements
+    # Updated placeholders extraction
     placeholders = {
         "{clientName}": client_data.get("clientName", ""),
         "{mailingAddress}": client_data.get("mailingAddress", ""),
-        "{propertyName}": report_data.get("propertyName", ""),
-        "{propertyAddress}": report_data.get("propertyAddress", ""),
-        "{officeSpacePercentage}": str(report_data.get("officeSpacePercentage", "")),
-        "{warehouseSpacePercentage}": str(report_data.get("warehouseSpacePercentage", "")),
-        "{retailSpacePercentage}": str(report_data.get("retailSpacePercentage", "")),
-        "{otherSpacePercentage}": str(report_data.get("otherSpacePercentage", "")),
-        "{propertyRepresentativeName}": report_data.get("propertyRepresentativeName", ""),
+        "{propertyName}": report_data.get("propertyInfo", {}).get("propertyName", ""),
+        "{propertyAddress}": report_data.get("propertyInfo", {}).get("propertyAddress", ""),
+        "{officeSpacePercentage}": str(report_data.get("buildingDetails", {}).get("officeSpacePercentage", "")),
+        "{warehouseSpacePercentage}": str(report_data.get("buildingDetails", {}).get("warehouseSpacePercentage", "")),
+        "{retailSpacePercentage}": str(report_data.get("buildingDetails", {}).get("retailSpacePercentage", "")),
+        "{otherSpacePercentage}": str(report_data.get("buildingDetails", {}).get("otherSpacePercentage", "")),
+        "{propertyRepresentativeName}": client_data.get("propertyRepresentativeName", ""),
+        "{manufacturingSpacePercentage}": str(report_data.get("buildingDetails", {}).get("manufacturingSpacePercentage", "")),
+        "{roleOrRelationship}": client_data.get("roleOrRelationship", ""),
+        "{propertyType}": report_data.get("propertyInfo", {}).get("propertyType", ""),
+        "{totalBuildingSqFt}": str(report_data.get("propertyInfo", {}).get("totalBuildingSqFt", "")),
+        "{typeOfInspection}": report_data.get("inspectionScope", {}).get("typeOfInspection", "")
     }
 
-    # Loop through paragraphs and replace placeholders
+    # Replace text in paragraphs
     for paragraph in doc.paragraphs:
         for placeholder, value in placeholders.items():
             if placeholder in paragraph.text:
+                print(f"Replacing placeholder: {placeholder} with value: {value}")  # Debug log
                 paragraph.text = paragraph.text.replace(placeholder, value)
 
-    # Save the document to a BytesIO buffer
+    # Replace text in shapes here
+
     # Save the document to a BytesIO buffer
     buffer = BytesIO()
     doc.save(buffer)
@@ -126,9 +167,6 @@ def generate_proposal(client_name, mailing_address, property_name,
     print(f"Generated file path by Python: {generated_file_path}")
 
     print("...")
-    # generated_file_path = os.path.join(upload_folder, f"Proposal_{args.clientName}_{args.propertyName}.docx")
-    # print("Generated file path by pthon:")
-    # print(generated_file_path)
 
     with open(generated_file_path, 'wb') as f:
         f.write(buffer.getvalue())  # Make sure buffer content is properly written as Word doc
@@ -146,5 +184,10 @@ generate_proposal(
     args.warehouseSpacePercentage,
     args.retailSpacePercentage,
     args.otherSpacePercentage,
-    args.propertyRepresentativeName
+    args.propertyRepresentativeName,
+    args.manufacturingSpacePercentage,
+    args.roleOrRelationship,
+    args.propertyType,
+    args.totalBuildingSqFt,
+    args.typeOfInspection
 )
