@@ -57,6 +57,7 @@ table tr:hover {
     gap: 10px;
     align-items: center;
     justify-content: center;
+    border: 0px;
 }
 
 .action-buttons button {
