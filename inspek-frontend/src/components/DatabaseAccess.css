@@ -34,7 +34,7 @@ table th, table td {
 table th {
     background-color: #f4f4f4;
     color: #333;
-    font-size: 1.1em;
+    font-size: 0.9em;
     font-weight: bold;
     position: sticky; /* Keeps header visible on scroll */
     top: 0;
@@ -68,8 +68,14 @@ table tr:hover {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
-    width: 120px; /* Ensures all buttons have the same width */
+    width: 70px; /* Ensures all buttons have the same width */
     text-align: center;
+}
+
+/* Add bottom border to the actions column cell */
+table td.action-buttons {
+    padding-bottom: 40px;
+    border-bottom: 1px solid #ddd; /* Add bottom border to the cell */
 }
 
 .action-buttons button:hover {

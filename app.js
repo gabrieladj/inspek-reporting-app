@@ -188,47 +188,161 @@ app.post('/api/report-data', async (req, res) => {
 
 app.post('/api/create-report-outline', async (req, res) => {
   try {
-    const { title, description, clientId, propertyInfo, inspectionScope, inspectionDetails, buildingDetails } = req.body;
+    // Destructure all possible fields from the payload
+    const {
+      clientName, // Added from GAS payload
+      clientId, 
+      title, 
+      description, 
+      propertyName,
+      propertyAddress,
+      propertyType,
+      yearBuilt,
+      totalBuildingSqFt,
+      numFloors,
+      typeOfInspection,
+      droneImagery,
+      specificAreasOfConcern,
+      recentMaintenance,
+      ongoingIssues,
+      // ... other fields from GAS payload
+    } = req.body;
 
-    // Step 1: Validate clientId exists
-    const client = await Client.findById(clientId);
-    if (!client) {
-      return res.status(400).json({ message: 'Invalid clientId. Client not found.' });
+    // Step 1: Find or create client
+    let client;
+    if (clientId) {
+      // If clientId is provided, validate it
+      client = await Client.findById(clientId);
+      if (!client) {
+        return res.status(400).json({ message: 'Invalid clientId. Client not found.' });
+      }
+    } else if (clientName) {
+      // If no clientId, try to find by name
+      client = await Client.findOne({ clientName });
+      
+      // If client doesn't exist, create a new one
+      if (!client) {
+        client = new Client({
+          clientName,
+          propertyRepresentativeName: req.body.propertyRepresentativeName,
+          propertyRepresentativePhone: req.body.propertyRepresentativePhone,
+          propertyRepresentativeEmail: req.body.propertyRepresentativeEmail,
+          mailingAddress: req.body.mailingAddress,
+          // Add other client fields as needed
+        });
+        await client.save();
+      }
+    } else {
+      return res.status(400).json({ message: 'Client information is required' });
     }
 
     // Step 2: Create and save the report
     const newReport = new Report({
-      title,
-      description,
-      clientId,
-      propertyInfo,
-      inspectionScope,
-      inspectionDetails,
-      buildingDetails,
+      // Map fields directly from the payload
+      title: title || `Report for ${propertyName}`,
+      description: description || `Inspection report for property at ${propertyAddress}`,
+      clientId: client._id,
+      
+      // Structured property information
+      propertyInfo: {
+        propertyName,
+        propertyAddress,
+        propertyType,
+        yearBuilt,
+        totalBuildingSqFt,
+        numFloors
+      },
+      
+      // Inspection details
+      inspectionScope: {
+        typeOfInspection,
+        droneImagery: droneImagery === true || droneImagery === 'Yes',
+        specificAreasOfConcern
+      },
+      
+      // Building details
+      buildingDetails: {
+        recentMaintenance,
+        ongoingIssues
+      },
+      
+      // Additional fields from GAS payload
+      additionalInfo: {
+        // Add any additional fields not covered above
+        hvacDetails: req.body.hvacDetails,
+        environmentalConcerns: req.body.environmentalConcerns,
+        // ... other fields
+      },
+      
+      // Inspection scheduling
+      inspectionDetails: {
+        preferredDate: req.body.preferredDate,
+        preferredTime: req.body.preferredTime,
+        alternateDate: req.body.alternateDate,
+        alternateTime: req.body.alternateTime
+      },
+      
+      // Set initial status
+      status: 'draft'
     });
 
     const savedReport = await newReport.save();
 
-    // Step 3: Populate clientId
-    const populatedReport = await savedReport.populate({ path: 'clientId', select: 'name' });
-    console.log("Populated Report:", populatedReport);
-
-    // Step 4: Construct the report outline
+    // Step 3: Construct the report outline
     const sections = [
-      { sectionName: 'Title', content: savedReport.title },
-      { sectionName: 'Description', content: savedReport.description },
-      { sectionName: 'Client Information', content: `Client: ${client.clientName}` },
-      { sectionName: 'Property Information', content: `Property Name: ${savedReport.propertyInfo.propertyName}` },
-      { sectionName: 'Inspection Scope', content: `Inspection Type: ${savedReport.inspectionScope.typeOfInspection}` },
-      { sectionName: 'Inspection Details', content: `Preferred Date: ${savedReport.inspectionDetails.preferredDate}` },
-      { sectionName: 'Building Details', content: `Recent Maintenance: ${savedReport.buildingDetails.recentMaintenance}` },
+      { 
+        sectionName: 'Title', 
+        content: savedReport.title 
+      },
+      { 
+        sectionName: 'Description', 
+        content: savedReport.description 
+      },
+      { 
+        sectionName: 'Client Information', 
+        content: `Client: ${client.clientName}\nContact: ${client.propertyRepresentativePhone || 'N/A'}` 
+      },
+      { 
+        sectionName: 'Property Information', 
+        content: `
+          Property Name: ${savedReport.propertyInfo.propertyName}
+          Address: ${savedReport.propertyInfo.propertyAddress}
+          Type: ${savedReport.propertyInfo.propertyType}
+          Year Built: ${savedReport.propertyInfo.yearBuilt}
+          Total Building Sq Ft: ${savedReport.propertyInfo.totalBuildingSqFt}
+        `
+      },
+      { 
+        sectionName: 'Inspection Scope', 
+        content: `
+          Inspection Type: ${savedReport.inspectionScope.typeOfInspection}
+          Drone Imagery: ${savedReport.inspectionScope.droneImagery ? 'Yes' : 'No'}
+          Areas of Concern: ${savedReport.inspectionScope.specificAreasOfConcern}
+        `
+      },
+      { 
+        sectionName: 'Inspection Dates', 
+        content: `
+          Preferred Date: ${savedReport.inspectionDetails.preferredDate}
+          Preferred Time: ${savedReport.inspectionDetails.preferredTime}
+          Alternate Date: ${savedReport.inspectionDetails.alternateDate}
+          Alternate Time: ${savedReport.inspectionDetails.alternateTime}
+        `
+      }
     ];
 
-    // Step 5: Respond with the report outline
-    res.status(200).json({ outline: sections });
+    // Step 4: Respond with the report and outline
+    res.status(201).json({ 
+      report: savedReport,
+      outline: sections 
+    });
+
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ message: 'Error creating report outline' });
+    console.error('Error creating report outline:', error);
+    res.status(500).json({ 
+      message: 'Error creating report outline',
+      error: error.message 
+    });
   }
 });
 

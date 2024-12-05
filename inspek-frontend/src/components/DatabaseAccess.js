@@ -132,7 +132,7 @@ const DatabaseAccess = () => {
                     <td>{item.title || 'N/A'}</td>
                     <td>{item.description || 'N/A'}</td>
                     <td className="action-buttons">
-                        <button onClick={() => handleReportClick(item._id)}>View Details</button>
+                        <button onClick={() => handleReportClick(item._id)}>View</button>
                         <button onClick={() => openDeleteReportModal(item._id)}>Delete</button>
                     </td>
                 </tr>
@@ -146,7 +146,7 @@ const DatabaseAccess = () => {
                     <td>{client.propertyRepresentativePhone || 'N/A'}</td>
                     <td>{client.mailingAddress || 'N/A'}</td>
                     <td className="action-buttons">
-                        <button onClick={() => handleClientClick(client._id)}>View Details</button>
+                        <button onClick={() => handleClientClick(client._id)}>View</button>
                         <button onClick={() => openDeleteClientModal(client._id)}>Delete</button>
                     </td>
                 </tr>
