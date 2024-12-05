@@ -11,6 +11,7 @@ div {
   /* Main Title */
   .main-title {
     color: black;
+    padding-top: 20px;
     /* Add other styles specific to the main title */
   }
   

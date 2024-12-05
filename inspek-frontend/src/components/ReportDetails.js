@@ -61,9 +61,6 @@ const ReportDetails = () => {
       >
         X
       </button>
-      {/* Title */}
-      <h1 className="main-title">{reportDetails.title}</h1>
-      <p>{reportDetails.description}</p>
 
       {/* Main Content Grid */}
       <div className="report-details-grid">
@@ -86,6 +83,10 @@ const ReportDetails = () => {
 
         {/* Right-hand side: Report Details */}
         <div className="right-column">
+          {/* Title */}
+          <h1 className="main-title">{reportDetails.title}</h1>
+          <p>{reportDetails.description}</p>   
+             
           {/* Inspection Scope */}
           <h3>Inspection Scope</h3>
           <p><strong>Type of Inspection:</strong> {reportDetails.inspectionScope.typeOfInspection}</p>
