@@ -503,7 +503,7 @@ app.post('/api/generate-report', async (req, res) => {
       officeSpacePercentage, warehouseSpacePercentage, retailSpacePercentage, otherSpacePercentage
     });
 
-    const pythonProcess = spawn('python', [
+    const pythonProcess = spawn('python3', [
       path.join(__dirname, '/report_scripts/generate_proposal.py'),
       clientId.toString(),
       reportId.toString(),
