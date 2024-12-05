@@ -29,7 +29,7 @@ const Layout = () => {
         </Link>
 
         <Link to="/report-generation">
-          <button className={getButtonClass('/report-generation')} style={{ fontFamily: 'Bitter, serif' }}>Start New Report</button>
+          <button className={getButtonClass('/report-generation')} style={{ fontFamily: 'Bitter, serif' }}>Start New Proposal</button>
         </Link>
 
         <Link to="/database-access">

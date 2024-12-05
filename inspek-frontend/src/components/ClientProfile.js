@@ -82,7 +82,6 @@ const ViewClientProfile = () => {
       <div style={{ flex: 2 }}>
         <h2>Client Overview</h2>
 
-        {/* Properties Associated */}
         <div style={{ marginBottom: '20px' }}>
           <h3>Properties Associated</h3>
           {clientData.properties && clientData.properties.length > 0 ? (
@@ -115,10 +114,10 @@ const ViewClientProfile = () => {
 
         {/* Contacts */}
         <div style={{ marginBottom: '20px' }}>
-          <h3>Contacts</h3>
+          {/* <h3>Contacts</h3> */}
 
           {/* Property Representatives Table */}
-          <div>
+          {/* <div>
             <h4>Property Representatives</h4>
             {clientData.properties && clientData.properties.length > 0 ? (
               <table border="1" cellPadding="8">
@@ -144,10 +143,10 @@ const ViewClientProfile = () => {
             ) : (
               <p>No property representatives available for this client.</p>
             )}
-          </div>
+          </div> */}
 
           {/* On-Site Contacts Table */}
-          <div>
+          {/* <div>
             <h4>On-Site Contacts</h4>
             {clientData.properties && clientData.properties.length > 0 ? (
               <table border="1" cellPadding="8">
@@ -173,7 +172,7 @@ const ViewClientProfile = () => {
             ) : (
               <p>No on-site contacts available for this client.</p>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Associated Reports */}

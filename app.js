@@ -444,6 +444,9 @@ app.get('/api/clients/:clientId', async (req, res) => {
   }
 });
 
+//API FOR GETTING PROPERTY REPS
+//API FOR GETTING ONSITE CONTACTS
+
 // Delete client and associated reports
 app.delete('/api/clients/:id', async (req, res) => {
   try {

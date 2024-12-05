@@ -35,6 +35,9 @@ table th {
   padding-left: 20px;
   padding-right: 20px;
   padding-top:20px;
+  height: 100vh; /* Makes the left section fill the entire viewport height */
+  position: sticky;
+  top: 0; /* Ensures it stays at the top of the page */
 }
 
 .main-content {

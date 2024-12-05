@@ -7,6 +7,7 @@ import pymongo
 from bson import ObjectId  # Import ObjectId from bson
 import argparse
 from io import BytesIO
+from docx.shared import RGBColor
 # from docxtpl import DocxTemplate
 
 # Load environment variables
@@ -145,8 +146,23 @@ def generate_proposal(client_name, mailing_address, property_name,
         for placeholder, value in placeholders.items():
             if placeholder in paragraph.text:
                 print(f"Replacing placeholder: {placeholder} with value: {value}")  # Debug log
-                paragraph.text = paragraph.text.replace(placeholder, value)
-
+                
+                # Split the paragraph text
+                parts = paragraph.text.split(placeholder)
+                
+                # Clear existing runs
+                paragraph.clear()
+                
+                # Reconstruct paragraph
+                for i, part in enumerate(parts):
+                    # Add normal text part
+                    if part:
+                        paragraph.add_run(part)
+                    
+                    # Add colored placeholder after each part (except last)
+                    if i < len(parts) - 1:
+                        placeholder_run = paragraph.add_run(value)
+                        placeholder_run.font.color.rgb = RGBColor(255, 0, 0)  # Pure red
     # Replace text in shapes here
 
     # Save the document to a BytesIO buffer

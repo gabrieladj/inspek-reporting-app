@@ -154,10 +154,10 @@ const handleGenerateReport = () => {
 
   return (
     <div className="report-generation-container">
-      <h2>Generate Report</h2>
+      <h2>Generate Proposal Document</h2>
 
       <div className="form-group">
-        <label>Select Report Type</label>
+        <label>Selected Report Type:</label>
         <div className="existing-client-bubble">
           <button
             type="button"
@@ -165,20 +165,6 @@ const handleGenerateReport = () => {
             onClick={() => setReportType('proposal')}
           >
             Proposal
-          </button>
-          {/* <button
-            type="button"
-            className={`bubble-button ${reportType === 'summaryReport' ? 'selected' : ''}`}
-            onClick={() => setReportType('summaryReport')}
-          >
-            Summary Report
-          </button> */}
-          <button
-            type="button"
-            className={`bubble-button ${reportType === 'fullReport' ? 'selected' : ''}`}
-            onClick={() => setReportType('fullReport')}
-          >
-            Full Report
           </button>
         </div>
       </div>
