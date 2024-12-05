@@ -9,79 +9,101 @@
 
 .error {
     color: red;
+    font-weight: bold;
 }
 
+/* Table Styling */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    background-color: #fff;
+    overflow-x: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 table th, table td {
     border: 1px solid #ddd;
-    text-align: center; /* Center text for table headers and cells */
-    padding: 8px;
-    vertical-align: middle; /* Align cell content vertically */
+    text-align: center;
+    padding: 10px;
+    vertical-align: middle;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
 table th {
     background-color: #f4f4f4;
+    color: #333;
+    font-size: 1.1em;
+    font-weight: bold;
+    position: sticky; /* Keeps header visible on scroll */
+    top: 0;
+    z-index: 1;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Action buttons styling */
+/* Alternating row colors */
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Action Buttons */
 .action-buttons {
     display: flex;
-    gap: 12px; /* Add spacing between buttons */
-    align-items: center; /* Ensure buttons are vertically centered */
-    flex-wrap: nowrap; /* Prevent buttons from stacking */
-    margin: 0; /* Ensure no extra margin around action buttons */
-    padding: 50; /* Remove any internal padding */
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
 }
 
 .action-buttons button {
-    padding: 5px 10px;
+    padding: 5px 12px;
     background-color: #A25352;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    text-align: center; /* Ensure the text is centered */
-    flex-shrink: 0; /* Prevent buttons from shrinking and causing wrapping */
-    box-sizing: border-box; /* Include padding and border in the button's total size */
+    transition: background-color 0.3s;
+    width: 120px; /* Ensures all buttons have the same width */
+    text-align: center;
 }
 
-/* Hover effect for buttons */
 .action-buttons button:hover {
     background-color: #7a3e3d;
 }
 
-
-/* Table styles */
-table th, table td {
-    border: 1px solid #ddd;
-    text-align: center; /* Center text for table headers and cells */
-    padding: 8px;
-    vertical-align: middle; /* Align cell content vertically */
-    word-wrap: break-word; /* Ensure long text wraps properly */
-    white-space: normal; /* Prevent text from overflowing */
-    box-sizing: border-box; /* Ensure padding does not affect box size */
+/* Property Name Column Width */
+table th:nth-child(2), /* Assuming 'propertyName' is the second column */
+table td:nth-child(2) {
+    width: 200px; /* Adjust to your preferred width */
+    word-wrap: normal;
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
-/* Pagination styling */
+/* Pagination */
 .pagination {
     margin-top: 20px;
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 10px;
 }
 
 .pagination button {
-    padding: 5px 10px;
+    padding: 8px 15px;
     background-color: #be6666;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pagination button:hover {
+    background-color: #a35252;
 }
 
 .pagination button:disabled {
@@ -89,7 +111,7 @@ table th, table td {
     cursor: not-allowed;
 }
 
-
+/* Close Button for Modals */
 .close-button {
     position: absolute;
     top: 10px;
@@ -98,5 +120,19 @@ table th, table td {
     border: none;
     font-size: 20px;
     cursor: pointer;
+    color: #333;
 }
 
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
