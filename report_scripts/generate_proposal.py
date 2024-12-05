@@ -16,7 +16,6 @@ TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')
 if TEMPLATE_PATH is None:
     print("Error: TEMPLATE_PATH is not set in the environment variables!")
     sys.exit(1)
-print(f"UPLOAD_FOLDER: {os.getenv('UPLOAD_FOLDER')}")
 
 
 # Normalize path separator for cross-platform compatibility
@@ -56,81 +55,89 @@ if not ObjectId.is_valid(report_id):
     print(f"Error: Invalid report_id: {report_id}")
     sys.exit(1)
 
-def generate_proposal(client_id, report_id, client_name, mailing_address, property_name,
+def generate_proposal(client_name, mailing_address, property_name,
                       property_address, office_space_percentage, warehouse_space_percentage,
                       retail_space_percentage, other_space_percentage, property_representative_name):
-    print(f"Received reportId: {report_id}")
-    # Fetch the report data based on report_id
 
-# Convert clientId and reportId to ObjectId
-client_id = ObjectId(args.client_id)
-report_id = ObjectId(args.report_id)
+    # Convert clientId and reportId to ObjectId
+    client_id = ObjectId(args.client_id)
+    report_id = ObjectId(args.report_id)
 
-# Fetch data from MongoDB
-print(f"Querying client collection with client_id: {client_id}")
-client_data = client_collection.find_one({"_id": client_id})
+    # Fetch data from MongoDB
+    print(f"Querying client collection with client_id: {client_id}")
+    client_data = client_collection.find_one({"_id": client_id})
 
-print(f"Querying report collection with report_id: {report_id}")
-report_data = report_collection.find_one({"_id": report_id})
+    print(f"Querying report collection with report_id: {report_id}")
+    report_data = report_collection.find_one({"_id": report_id})
 
-if not client_data:
-    print(f"No client data found for clientId: {client_id}")
-    sys.exit(1)
-if not report_data:
-    print(f"No report data found for reportId: {report_id}")
-    sys.exit(1)
+    if not client_data:
+        print(f"No client data found for clientId: {client_id}")
+        sys.exit(1)
+    if not report_data:
+        print(f"No report data found for reportId: {report_id}")
+        sys.exit(1)
 
-print(f"Client ID: {args.client_id}")
-print(f"Report ID: {args.report_id}")
+    print(f"Client ID: {args.client_id}")
+    print(f"Report ID: {args.report_id}")
 
-# Load template
-if not os.path.exists(TEMPLATE_FILE):
-    print(f"Error: Template file not found at {TEMPLATE_FILE}")
-    sys.exit(1)
+    # Load template
+    if not os.path.exists(TEMPLATE_FILE):
+        print(f"Error: Template file not found at {TEMPLATE_FILE}")
+        sys.exit(1)
 
-# Open the template document
-doc = Document(TEMPLATE_FILE)
+    # Open the template document
+    doc = Document(TEMPLATE_FILE)
 
-# Placeholder replacements
-placeholders = {
-    "{clientName}": client_data.get("clientName", ""),
-    "{mailingAddress}": client_data.get("mailingAddress", ""),
-    "{propertyName}": report_data.get("propertyName", ""),
-    "{propertyAddress}": report_data.get("propertyAddress", ""),
-    "{officeSpacePercentage}": str(report_data.get("officeSpacePercentage", "")),
-    "{warehouseSpacePercentage}": str(report_data.get("warehouseSpacePercentage", "")),
-    "{retailSpacePercentage}": str(report_data.get("retailSpacePercentage", "")),
-    "{otherSpacePercentage}": str(report_data.get("otherSpacePercentage", "")),
-    "{propertyRepresentativeName}": report_data.get("propertyRepresentativeName", ""),
-}
+    # Placeholder replacements
+    placeholders = {
+        "{clientName}": client_data.get("clientName", ""),
+        "{mailingAddress}": client_data.get("mailingAddress", ""),
+        "{propertyName}": report_data.get("propertyName", ""),
+        "{propertyAddress}": report_data.get("propertyAddress", ""),
+        "{officeSpacePercentage}": str(report_data.get("officeSpacePercentage", "")),
+        "{warehouseSpacePercentage}": str(report_data.get("warehouseSpacePercentage", "")),
+        "{retailSpacePercentage}": str(report_data.get("retailSpacePercentage", "")),
+        "{otherSpacePercentage}": str(report_data.get("otherSpacePercentage", "")),
+        "{propertyRepresentativeName}": report_data.get("propertyRepresentativeName", ""),
+    }
 
-# Loop through paragraphs and replace placeholders
-for paragraph in doc.paragraphs:
-    for placeholder, value in placeholders.items():
-        if placeholder in paragraph.text:
-            paragraph.text = paragraph.text.replace(placeholder, value)
+    # Loop through paragraphs and replace placeholders
+    for paragraph in doc.paragraphs:
+        for placeholder, value in placeholders.items():
+            if placeholder in paragraph.text:
+                paragraph.text = paragraph.text.replace(placeholder, value)
 
-# Save the document to a BytesIO buffer
-# Save the document to a BytesIO buffer
-buffer = BytesIO()
-doc.save(buffer)
-buffer.seek(0)
+    # Save the document to a BytesIO buffer
+    # Save the document to a BytesIO buffer
+    buffer = BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
 
-# Save the file to disk
-output_filename = f"Proposal_{client_data.get('clientName', 'Unknown')}_{report_data.get('propertyName', 'Unknown')}.docx"
-file_path = os.path.join(os.getenv('UPLOAD_FOLDER'), output_filename)
-print(f"Generated file saved at: {file_path}")  # confirm correct path    
+    print(f"UPLOAD_FOLDER: {os.getenv('UPLOAD_FOLDER')}")
 
-with open(file_path, 'wb') as f:
-    f.write(buffer.getvalue())  # Make sure buffer content is properly written as Word doc
+    upload_folder = os.getenv('UPLOAD_FOLDER', './report_scripts/uploads')
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder)  # Create the directory if it doesn't exist
 
-# Return the file path to the Node.js app
-sys.stdout.write(file_path)
+    # Save the file to disk
+    output_filename = f"Proposal_{args.clientName}_{args.propertyName}.docx"
+    generated_file_path = os.path.join(upload_folder, output_filename)
+    print(f"OUTPUT FILENAME:", (output_filename))
+    print(f"Generated file path by Python: {generated_file_path}")
+
+    print("...")
+    # generated_file_path = os.path.join(upload_folder, f"Proposal_{args.clientName}_{args.propertyName}.docx")
+    # print("Generated file path by pthon:")
+    # print(generated_file_path)
+
+    with open(generated_file_path, 'wb') as f:
+        f.write(buffer.getvalue())  # Make sure buffer content is properly written as Word doc
+
+    # Return the GENERATED file path to the Node.js app
+    sys.stdout.write(generated_file_path)
 
 # Calling the function with arguments
 generate_proposal(
-    args.client_id,
-    args.report_id,
     args.clientName,
     args.mailingAddress,
     args.propertyName,

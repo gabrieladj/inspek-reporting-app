@@ -68,7 +68,7 @@ const handleGenerateReport = () => {
       clientId: selectedReport.clientId._id, 
       clientName: selectedReport.clientId.clientName || 'Unknown Client',
       mailingAddress: selectedReport.clientId.mailingAddress,
-      propertyName: selectedReport.propertyInfo.propertyName,
+      propertyName: selectedReport.propertyInfo?.propertyName,
       propertyAddress: selectedReport.clientId.propertyAddress,
 
       officeSpacePercentage: selectedReport.buildingDetails.officeSpacePercentage,
@@ -96,8 +96,9 @@ const handleGenerateReport = () => {
     })
     .then((data) => {
       if (data && data.filePath) {
-        const filename = data.filePath.split('\\').pop(); // Extract filename from the filePath
+        const filename = data.filePath.replace(/^.*[\\]/, ''); // Safer extraction of the file name
 
+        console.log('Download filename:', filename);
         // Trigger the file download by fetching the file from the new GET route
         return fetch(`${API_BASE_URL}/download-report/${filename}`)
           .then((downloadResponse) => {

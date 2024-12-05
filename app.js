@@ -76,6 +76,9 @@ app.post('/api/login', async (req, res) => {
 // API ROUTES BELOW
 ////
 
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Route to get dashboard data
 app.get('/api/dashboard-data', async (req, res) => {
   try {
@@ -517,10 +520,10 @@ app.post('/api/generate-report', async (req, res) => {
 
     pythonProcess.stdout.on('data', (data) => {
       const generatedFilePath = data.toString().trim();
-      console.log(`Generated file saved at: ${generatedFilePath}`);
+      console.log(`Generated file saved at (express): ${generatedFilePath}`);
 
       // Send the file path as the response to the frontend
-      res.json({ message: 'Report generated successfully', filePath: generatedFilePath });
+      res.json({ message: 'Report generated successfully', filePath: path.basename(generatedFilePath) });
     });
 
     pythonProcess.stderr.on('data', (data) => {
@@ -545,8 +548,15 @@ app.post('/api/generate-report', async (req, res) => {
 //serve the downloaded proposal
 app.get('/api/download-report/:filename', (req, res) => {
   const { filename } = req.params;
+
+  const uploadFolder = process.env.UPLOAD_FOLDER || 'uploads';  // Fallback to 'uploads'
+  const sanitizedFilename = path.basename(filename); // Ensure only the base name is used
+  const filePath = path.join(__dirname, 'uploads', sanitizedFilename);
+  console.log('Attempting to serve file from:', filePath);
   // Update the filePath to reflect the correct directory where the file is saved
-  const filePath = path.join(__dirname, process.env.UPLOAD_FOLDER, filename);
+  // const filePath = path.normalize(path.join(__dirname, process.env.UPLOAD_FOLDER, filename));
+  
+  console.log('Upload folder (express app):', uploadFolder );
   console.log('Attempting to serve file from:', filePath);
   
   // Check if file exists
@@ -554,7 +564,6 @@ app.get('/api/download-report/:filename', (req, res) => {
     if (err) {
       return res.status(404).json({ message: 'File not found' });
     }
-
     res.download(filePath, filename, {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
