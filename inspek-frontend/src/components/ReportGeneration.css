@@ -57,6 +57,7 @@ input {
   border: none;
   border-radius: 20px;
   cursor: pointer;
+  justify-content: center;
 }
 
 .client-action-bubble .selected {
@@ -105,6 +106,7 @@ input {
   border: 1px solid #ddd;
   padding: 12px; /* Increased padding for better readability */
   text-align: center; 
+  position: relative; /* Ensures relative positioning for button alignment */
 }
 
 .clients-table th {
@@ -114,8 +116,10 @@ input {
 }
 
 .clients-table td {
-  text-align: center; /* Keep text aligned consistently */
-  font-size: 14px; /* Optional: Match font size with headers */
+  text-align: center; 
+  font-size: 14px; 
+  justify-content: center; 
+  align-items: center;
 }
 
 
@@ -128,6 +132,10 @@ input {
   cursor: pointer;
   outline: none;
   transition: background-color 0.3s ease;
+  display: inline-block;
+  justify-content: center; /* Horizontally centers the circle */
+  align-items: center; /* Vertically centers the circle */
+  margin: 0 auto; /* Centers the circle within the column */
 }
 
 .select-circle.selected {
