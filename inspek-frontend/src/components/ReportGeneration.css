@@ -169,6 +169,14 @@ input {
   gap: 10px;
 }
 
+.pagination span {
+  display: inline-block; /* Ensures the text is treated as a block for alignment */
+  text-align: center; /* Centers the text horizontally */
+  line-height: 1.5; /* Adjusts line height if needed */
+  font-size: 1em; /* Ensures the text size is consistent */
+  padding: 0 20px 0 10px; /* Adds more padding on the right */
+}
+
 .pagination button {
   padding: 5px 10px;
   background-color: #be6666;
