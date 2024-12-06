@@ -430,12 +430,14 @@ app.get('/api/reports/:id', async (req, res) => {
 app.get('/api/reports/by-client/:clientId', async (req, res) => {
   try {
     const reports = await Report.find({ clientId: req.params.clientId })
-      .populate({ path: 'clientId', select: 'clientName' }); // Populate client info
+      .populate('propertyInfo')  // Ensure propertyInfo is fully populated
+      .populate('clientId', 'clientName');  // Populate client info
 
-    res.json(reports);
+    // If reports is not an array or is undefined, send an empty array
+    res.json(Array.isArray(reports) ? reports : []);
   } catch (err) {
     console.error('Error fetching reports by client:', err);
-    res.status(500).json({ message: 'Error fetching reports by client' });
+    res.status(500).json({ message: 'Error fetching reports by client', reports: [] });
   }
 });
 

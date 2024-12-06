@@ -26,20 +26,22 @@ const ViewClientProfile = () => {
         const clientResponse = await axios.get(`${API_BASE_URL}/clients/${clientId}`);
         console.log('Client data:', clientResponse.data);
         setClientData(clientResponse.data);
-
+  
         // Fetch reports associated with the client
-      // Fetch reports associated with the client
         const reportsResponse = await axios.get(`${API_BASE_URL}/reports/by-client/${clientId}`);
         console.log('Reports data:', reportsResponse.data);
-        setReports(reportsResponse.data);
+        
+        // Ensure reports is always an array
+        setReports(Array.isArray(reportsResponse.data) ? reportsResponse.data : []);
       } catch (err) {
         setError('Failed to fetch data.');
         console.error('Error fetching data:', err);
-        }
-      };
-
+        setReports([]);  // Ensure reports is an empty array on error
+      }
+    };
+  
     fetchData();
-  }, [clientId]); // Fetch data whenever clientId changes
+  }, [clientId]);
 
   if (error) {
     return <p style={{ color: 'red' }}>{error}</p>;
@@ -96,8 +98,8 @@ const ViewClientProfile = () => {
                 </tr>
               </thead>
               <tbody>
-                {clientData.properties.map((property) => (
-                  <tr key={property._id}>
+                {clientData.properties.map((property, index) => (
+                  <tr key={property._id || index}>
                     <td>{property.propertyName}</td>
                     <td>{property.propertyAddress}</td>
                     <td>{property.propertyType}</td>
@@ -117,62 +119,33 @@ const ViewClientProfile = () => {
           {/* <h3>Contacts</h3> */}
 
           {/* Property Representatives Table */}
-          <div>
-            <h4>Property Representatives</h4>
-            {clientData.properties && clientData.properties.length > 0 ? (
-              <table border="1" cellPadding="8">
-                <thead>
-                  <tr>
-                    <th>Property Name</th>
-                    <th>Property Representative Name</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {clientData.properties.map((property) => (
-                    <tr key={property._id}>
-                      <td>{property.propertyName}</td>
-                      <td>{property.propertyRepresentativeName}</td>
-                      <td>{property.propertyRepresentativePhone}</td>
-                      <td>{property.propertyRepresentativeEmail}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <p>No property representatives available for this client.</p>
-            )}
-          </div>
-
-          {/* On-Site Contacts Table */}
-          {/* <div>
-            <h4>On-Site Contacts</h4>
-            {clientData.properties && clientData.properties.length > 0 ? (
-              <table border="1" cellPadding="8">
-                <thead>
-                  <tr>
-                    <th>Property Name</th>
-                    <th>On-Site Contact Name</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {clientData.properties.map((property) => (
-                    <tr key={property._id}>
-                      <td>{property.propertyName}</td>
-                      <td>{property.onSiteContactName}</td>
-                      <td>{property.onSiteContactPhone}</td>
-                      <td>{property.onSiteContactEmail}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <p>No on-site contacts available for this client.</p>
-            )}
-          </div> */}
+<div>
+  <h4>Property Representatives</h4>
+  {clientData.properties && clientData.properties.length > 0 ? (
+    <table border="1" cellPadding="8">
+      <thead>
+        <tr>
+          <th>Property Name</th>
+          <th>Property Representative Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        {clientData.properties.map((property, index) => (
+          <tr key={property._id || index}>
+            <td>{property.propertyName}</td>
+            <td>{clientData.propertyRepresentativeName}</td>
+            <td>{clientData.propertyRepresentativePhone}</td>
+            <td>{clientData.propertyRepresentativeEmail}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p>No property representatives available for this client.</p>
+  )}
+</div>
         </div>
 
         {/* Associated Reports */}
@@ -188,8 +161,8 @@ const ViewClientProfile = () => {
                 </tr>
               </thead>
               <tbody>
-                {reports.map((report) => (
-                  <tr key={report._id}>
+                {reports.map((report, index) => (
+                  <tr key={report._id || index}>
                     <td>{report.propertyInfo?.propertyName}</td>
                     <td>{report.title}</td>
                     <td>{report.description}</td>

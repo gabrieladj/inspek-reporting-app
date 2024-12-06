@@ -11,10 +11,14 @@ const formatDate = (dateString) => {
 };
 
 const formatTime = (timeString) => {
+  // Remove existing AM/PM if present
+  timeString = timeString.replace(/\s*(?:AM|PM)\s*/i, '').trim();
+  
   const [hour, minute] = timeString.split(':');
   const hourInt = parseInt(hour, 10);
   const period = hourInt >= 12 ? 'PM' : 'AM';
   const formattedHour = hourInt % 12 || 12; // Convert 0 to 12 for midnight
+  
   return `${formattedHour}:${minute} ${period}`;
 };
 
