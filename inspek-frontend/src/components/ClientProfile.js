@@ -49,7 +49,7 @@ const ViewClientProfile = () => {
     return <p>Loading...</p>;
   }
 
-  console.log("clientData properties:", clientData.properties);
+  // console.log("clientData properties:", clientData.properties);
 
   return (
     <div style={{ display: 'flex', position: 'relative' }}>
@@ -117,7 +117,7 @@ const ViewClientProfile = () => {
           {/* <h3>Contacts</h3> */}
 
           {/* Property Representatives Table */}
-          {/* <div>
+          <div>
             <h4>Property Representatives</h4>
             {clientData.properties && clientData.properties.length > 0 ? (
               <table border="1" cellPadding="8">
@@ -143,7 +143,7 @@ const ViewClientProfile = () => {
             ) : (
               <p>No property representatives available for this client.</p>
             )}
-          </div> */}
+          </div>
 
           {/* On-Site Contacts Table */}
           {/* <div>
@@ -190,7 +190,7 @@ const ViewClientProfile = () => {
               <tbody>
                 {reports.map((report) => (
                   <tr key={report._id}>
-                    <td>{report.propertyName}</td>
+                    <td>{report.propertyInfo?.propertyName}</td>
                     <td>{report.title}</td>
                     <td>{report.description}</td>
                   </tr>

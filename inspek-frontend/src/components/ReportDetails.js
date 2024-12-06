@@ -5,6 +5,19 @@ import './ReportDetails.css';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
 
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+const formatTime = (timeString) => {
+  const [hour, minute] = timeString.split(':');
+  const hourInt = parseInt(hour, 10);
+  const period = hourInt >= 12 ? 'PM' : 'AM';
+  const formattedHour = hourInt % 12 || 12; // Convert 0 to 12 for midnight
+  return `${formattedHour}:${minute} ${period}`;
+};
+
 const ReportDetails = () => {
   const { reportId } = useParams(); // Extracts the reportId from the URL
   const [reportDetails, setReportDetails] = useState(null);
@@ -95,10 +108,10 @@ const ReportDetails = () => {
 
           {/* Inspection Details */}
           <h3>Inspection Details</h3>
-          <p><strong>Preferred Date:</strong> {reportDetails.inspectionDetails.preferredDate}</p>
-          <p><strong>Preferred Time:</strong> {reportDetails.inspectionDetails.preferredTime}</p>
-          <p><strong>Alternate Date:</strong> {reportDetails.inspectionDetails.alternateDate}</p>
-          <p><strong>Alternate Time:</strong> {reportDetails.inspectionDetails.alternateTime}</p>
+          <p><strong>Preferred Date:</strong> {formatDate(reportDetails.inspectionDetails.preferredDate)}</p>
+          <p><strong>Preferred Time:</strong> {formatTime(reportDetails.inspectionDetails.preferredTime)}</p>
+          <p><strong>Alternate Date:</strong> {formatDate(reportDetails.inspectionDetails.alternateDate)}</p>
+          <p><strong>Alternate Time:</strong> {formatTime(reportDetails.inspectionDetails.alternateTime)}</p>
           <p><strong>Additional Information:</strong> {reportDetails.inspectionDetails.additionalInfo}</p>
 
           {/* Building Details */}

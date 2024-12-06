@@ -61,5 +61,27 @@ div {
   .right-column {
     background-color: #f4f4f4;
     flex: 2; /* Ensures it takes up the remaining space */
+    text-align: left;
   }
   
+  /* Center the titles */
+.centered-title {
+  text-align: center;
+  font-weight: bold;
+  margin: 20px 0;
+}
+/* Format the content */
+.left-aligned-content {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+
+.report-details-grid h3 {
+  margin-top: 30px;
+}
+
+button {
+  margin-top: 20px;
+  margin-right: 20px;
+}

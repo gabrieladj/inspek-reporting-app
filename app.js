@@ -544,19 +544,30 @@ app.get('/api/clients', async (req, res) => {
   }
 });
 
-// Get a specific client by ID
+// Get a specific client by ID, including associated property info
 app.get('/api/clients/:clientId', async (req, res) => {
   try {
     const client = await Client.findById(req.params.clientId);
     if (!client) {
       return res.status(404).json({ message: 'Client not found' });
     }
-    res.json(client);
+
+    // Fetch reports associated with the client and include propertyInfo
+    const reports = await Report.find({ clientId: req.params.clientId })
+      .select('propertyInfo') // Include only the propertyInfo fields from the reports
+      .exec();
+
+    // Add associated properties to the client object
+    const associatedProperties = reports.map(report => report.propertyInfo);
+
+    // Include the associated properties in the client response
+    res.json({ ...client.toObject(), properties: associatedProperties });
   } catch (error) {
     console.error('Error fetching client:', error);
     res.status(500).json({ message: 'Failed to fetch client.' });
   }
 });
+
 
 //API FOR GETTING PROPERTY REPS
 //API FOR GETTING ONSITE CONTACTS

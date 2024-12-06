@@ -54,7 +54,6 @@ table tr:hover {
 /* Action Buttons */
 .action-buttons {
     display: flex;
-    gap: 10px;
     align-items: center;
     justify-content: center;
     border: 0px;
@@ -75,6 +74,7 @@ table tr:hover {
 /* Add bottom border to the actions column cell */
 table td.action-buttons {
     padding-bottom: 40px;
+    padding-left: 20px;
     border-bottom: 1px solid #ddd; /* Add bottom border to the cell */
 }
 
@@ -100,7 +100,7 @@ table td:nth-child(2) {
 }
 
 .pagination button {
-    padding: 8px 15px;
+    padding: 8px 50px;
     background-color: #be6666;
     color: white;
     border: none;
